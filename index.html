@@ -383,6 +383,38 @@
         </div>
     </div>
     
+    <!-- MODAL CREATE CLIENT -->
+    <div id="create-client-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+        <div data-action="close-create-client" class="absolute inset-0 bg-gray-900/30 backdrop-blur-sm transition-opacity duration-300 opacity-0"></div>
+        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full md:w-auto">
+            <div class="pointer-events-auto w-full transform transition ease-in-out duration-300 translate-x-full bg-white shadow-2xl flex flex-col h-full rounded-none md:rounded-l-2xl overflow-hidden">
+                <div class="bg-sidebar-bg px-4 md:px-8 py-6 border-b border-sidebar-border flex justify-between items-center shrink-0">
+                    <div><h2 class="text-xl md:text-2xl font-bold text-sidebar-dark">Nouveau Client</h2><p class="text-sidebar-muted text-sm mt-1">Création d'une nouvelle fiche client</p></div>
+                    <button data-action="close-create-client" class="text-gray-400 hover:text-gray-600 transition-colors p-2"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                </div>
+                <div class="flex-1 overflow-y-auto p-8">
+                    <p>Le formulaire de création de client est en cours de développement.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CREATE CONTRACT -->
+    <div id="create-contract-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+        <div data-action="close-create-contract" class="absolute inset-0 bg-gray-900/30 backdrop-blur-sm transition-opacity duration-300 opacity-0"></div>
+        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full md:w-auto">
+            <div class="pointer-events-auto w-full transform transition ease-in-out duration-300 translate-x-full bg-white shadow-2xl flex flex-col h-full rounded-none md:rounded-l-2xl overflow-hidden">
+                <div class="bg-sidebar-bg px-4 md:px-8 py-6 border-b border-sidebar-border flex justify-between items-center shrink-0">
+                    <div><h2 class="text-xl md:text-2xl font-bold text-sidebar-dark">Nouveau Contrat</h2><p class="text-sidebar-muted text-sm mt-1">Création d'une nouvelle fiche contrat</p></div>
+                    <button data-action="close-create-contract" class="text-gray-400 hover:text-gray-600 transition-colors p-2"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                </div>
+                 <div class="flex-1 overflow-y-auto p-8">
+                    <p>Le formulaire de création de contrat est en cours de développement.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- CHANGE EMPLOYEE MODAL -->
     <div id="change-employee-modal" class="fixed inset-0 z-[60] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" data-action="close-change-employee"></div>
