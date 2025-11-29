@@ -1,0 +1,40 @@
+const fs = require('fs');
+let text = fs.readFileSync('scripts/app.js','utf8');
+const newBlock = `                        const exposedAPIs = {
+                            toggleSidebar,
+                            closeSidebarOnMobile,
+                            switchView,
+                            copyToClipboard,
+                            confirmDelete,
+                            openClientDetails,
+                            closeClientDetails,
+                            openCreateClientModal,
+                            closeCreateContractModal,
+                            openCreateContractModal,
+                            openContractEditModal,
+                            openContractDetails,
+                            openReportDetails,
+                            closeReportDetails,
+                            openCreateReportModal,
+                            closeCreateReportModal,
+                            addReportAttendee,
+                            addReportSection,
+                            removeReportSection,
+                            triggerSectionPhotoPicker,
+                            handleSectionPhotoChange,
+                            reportNextStep,
+                            reportPrevStep,
+                            generateReportPDF,
+                            finishReport,
+                            clearSignature,
+                            saveSignature,
+                            closeSignaturePad,
+                            openChangeEmployeeModal,
+                            closeChangeEmployeeModal,
+                            selectEmployee,
+                            printQRCode,
+                            sendReport,
+                            addComment
+                        };\n`;
+text = text.replace(/const exposedAPIs = \{[\s\S]*?\};\n/, newBlock);
+fs.writeFileSync('scripts/app.js', text, 'utf8');
