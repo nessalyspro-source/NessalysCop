@@ -27,8 +27,6 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpcndobW94bmRxdmxvcHp2Z3RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NDMzNjksImV4cCI6MjA4MDAxOTM2OX0.Xp0PuJkglDYoWDq39_d6TuYdDX6ktJ9iJ1TSP2yT5Yc';
     const SOCIETE_BUCKET = 'societe-assets';
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-    const siretCache = new Map();
-    let lastSiretCheck = { value: null, data: null };
 
     // --- GENERAL UI FUNCTIONS ---
     const toggleSidebar = () => {
@@ -90,82 +88,6 @@
 
     // --- SUPABASE HELPERS ---
     const normalizeSiret = (value = '') => value.replace(/\D/g, '');
-
-    const updateSiretFeedback = (elementId, message, tone = 'muted') => {
-        const el = document.getElementById(elementId);
-        if (!el) return;
-        el.classList.remove('text-green-600', 'text-red-500', 'text-gray-500');
-        const toneClass = tone === 'success' ? 'text-green-600' : tone === 'error' ? 'text-red-500' : 'text-gray-500';
-        el.classList.add(toneClass);
-        el.textContent = message || '';
-    };
-
-    const buildAddressFromSirene = (etablissement) => {
-        if (!etablissement) return '';
-        const adresse = etablissement.adresseEtablissement || {};
-        const voie = [
-            adresse.numeroVoieEtablissement,
-            adresse.indiceRepetitionEtablissement,
-            adresse.typeVoieEtablissement,
-            adresse.libelleVoieEtablissement
-        ].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
-        const postal = adresse.codePostalEtablissement;
-        const city = adresse.libelleCommuneEtablissement || adresse.libelleCedexEtablissement;
-        return [voie, postal, city].filter(Boolean).join(' ');
-    };
-
-    const fetchSiretData = async (siret, feedbackId) => {
-        const normalized = normalizeSiret(siret);
-        if (!normalized) {
-            updateSiretFeedback(feedbackId, '', 'muted');
-            return null;
-        }
-        if (normalized.length !== 14) {
-            updateSiretFeedback(feedbackId, 'Le SIRET doit contenir 14 chiffres.', 'error');
-            return null;
-        }
-        if (lastSiretCheck.value === normalized) {
-            updateSiretFeedback(feedbackId, 'SIRET vérifié', 'success');
-            return lastSiretCheck.data;
-        }
-        updateSiretFeedback(feedbackId, 'Vérification officielle en cours...', 'muted');
-        try {
-            if (siretCache.has(normalized)) {
-                const cached = siretCache.get(normalized);
-                updateSiretFeedback(feedbackId, 'SIRET vérifié', 'success');
-                lastSiretCheck = { value: normalized, data: cached };
-                return cached;
-            }
-            const response = await fetch(`https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/${normalized}`);
-            if (!response.ok) {
-                updateSiretFeedback(feedbackId, 'SIRET introuvable dans la base officielle.', 'error');
-                return null;
-            }
-            const json = await response.json();
-            siretCache.set(normalized, json);
-            lastSiretCheck = { value: normalized, data: json };
-            updateSiretFeedback(feedbackId, 'SIRET vérifié', 'success');
-            return json;
-        } catch (error) {
-            console.error('Erreur API SIRET', error);
-            updateSiretFeedback(feedbackId, 'Impossible de vérifier le SIRET pour le moment.', 'error');
-            return null;
-        }
-    };
-
-    const attachSiretWatcher = (inputId, feedbackId, addressId) => {
-        const input = document.getElementById(inputId);
-        if (!input) return;
-        input.addEventListener('blur', async () => {
-            const data = await fetchSiretData(input.value, feedbackId);
-            if (!data) return;
-            const formatted = buildAddressFromSirene(data.etablissement);
-            const addressInput = document.getElementById(addressId);
-            if (formatted && addressInput && !addressInput.value) {
-                addressInput.value = formatted;
-            }
-        });
-    };
 
     const attachSocieteLogoPreview = (inputId, previewId) => {
         const input = document.getElementById(inputId);
@@ -272,14 +194,6 @@
         }
         setSocieteModalLoading(true);
         try {
-            const sirenePayload = await fetchSiretData(formData.siret, 'societe-siret-feedback');
-            if (!sirenePayload) throw new Error('Vérifiez le numéro de SIRET');
-            const adresseSirene = buildAddressFromSirene(sirenePayload.etablissement);
-            if (adresseSirene && !formData.address) {
-                const addressInput = document.getElementById('societe-adresse');
-                if (addressInput) addressInput.value = adresseSirene;
-                formData.address = adresseSirene;
-            }
             const logoInfo = await uploadSocieteLogo(formData.logoFile, formData.reference);
             const insertPayload = {
                 ref: formData.reference,
@@ -570,8 +484,6 @@
             logoPreview.style.backgroundImage = '';
             logoPreview.textContent = 'Logo';
         }
-        updateSiretFeedback('societe-siret-feedback', '');
-        lastSiretCheck = { value: null, data: null };
     };
     const openSocieteModal = () => {
         resetSocieteModal();
@@ -1107,7 +1019,6 @@
         switchView('dashboard');
         setupAddressAutocomplete();
         attachSocieteLogoPreview('societe-logo-file', 'societe-logo-preview');
-        attachSiretWatcher('societe-siret', 'societe-siret-feedback', 'societe-adresse');
         
         document.body.addEventListener('click', (e) => {
             const actionTarget = e.target.closest('[data-action]');

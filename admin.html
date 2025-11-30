@@ -254,7 +254,6 @@
         </label>
         <label>SIRET
           <input id="admin-soc-siret" maxlength="18" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);">
-          <small id="admin-siret-feedback" style="display:block;margin-top:4px;color:var(--muted);font-size:12px;"></small>
         </label>
         <label style="grid-column:1/-1;">Adresse
           <input id="admin-soc-adresse" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);">
@@ -315,7 +314,6 @@
     const roleLabel = document.getElementById('role-label');
     const accessDenied = document.getElementById('access-denied');
     const socList = document.getElementById('admin-societes-list');
-    const siretMessage = document.getElementById('admin-siret-feedback');
     const logoPreview = document.getElementById('admin-logo-preview');
     const logoInput = document.getElementById('admin-soc-logo-file');
 
@@ -329,71 +327,7 @@
       });
     });
 
-    const updateSiretMessage = (message, tone = 'muted') => {
-      if (!siretMessage) return;
-      const colors = { success: '#86efac', error: '#fca5a5', muted: '#94a3b8' };
-      siretMessage.textContent = message || '';
-      siretMessage.style.color = colors[tone] || colors.muted;
-    };
-
     const normalizeSiret = (value = '') => value.replace(/\D/g, '');
-
-    const buildAddressFromSirene = (etablissement) => {
-      if (!etablissement) return '';
-      const adr = etablissement.adresseEtablissement || {};
-      const voie = [
-        adr.numeroVoieEtablissement,
-        adr.indiceRepetitionEtablissement,
-        adr.typeVoieEtablissement,
-        adr.libelleVoieEtablissement
-      ].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
-      const postal = adr.codePostalEtablissement;
-      const city = adr.libelleCommuneEtablissement || adr.libelleCedexEtablissement;
-      return [voie, postal, city].filter(Boolean).join(' ');
-    };
-
-    const fetchSiret = async (value, showFeedback = true) => {
-      const normalized = normalizeSiret(value);
-      if (!normalized) {
-        if (showFeedback) updateSiretMessage('', 'muted');
-        return null;
-      }
-      if (normalized.length !== 14) {
-        if (showFeedback) updateSiretMessage('14 chiffres requis', 'error');
-        return null;
-      }
-      if (showFeedback) updateSiretMessage('Vérification officielle...', 'muted');
-      try {
-        const response = await fetch(`https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/${normalized}`);
-        if (!response.ok) {
-          if (showFeedback) updateSiretMessage('SIRET introuvable', 'error');
-          return null;
-        }
-        const data = await response.json();
-        if (showFeedback) updateSiretMessage('SIRET vérifié', 'success');
-        return data;
-      } catch (error) {
-        console.error('Erreur API SIRET', error);
-        if (showFeedback) updateSiretMessage('Service indisponible', 'error');
-        return null;
-      }
-    };
-
-    const handleSiretBlur = async () => {
-      const input = document.getElementById('admin-soc-siret');
-      if (!input) return null;
-      const payload = await fetchSiret(input.value, true);
-      if (payload) {
-        const formatted = buildAddressFromSirene(payload.etablissement);
-        const addrInput = document.getElementById('admin-soc-adresse');
-        if (formatted && addrInput && !addrInput.value) {
-          addrInput.value = formatted;
-        }
-      }
-      return payload;
-    };
-
-    document.getElementById('admin-soc-siret')?.addEventListener('blur', handleSiretBlur);
 
     logoInput?.addEventListener('change', () => {
       if (!logoPreview) return;
@@ -523,13 +457,6 @@
       }
       setModalLoading(true);
       try {
-        const sirene = await fetchSiret(payload.siret, false);
-        if (!sirene) throw new Error('Impossible de vérifier le SIRET');
-        const formatted = buildAddressFromSirene(sirene.etablissement);
-        if (formatted && !payload.address) {
-          document.getElementById('admin-soc-adresse').value = formatted;
-          payload.address = formatted;
-        }
         const logoInfo = await uploadLogo(payload.logoFile, payload.ref);
         const { data: created, error } = await supabaseClient.from('societes').insert([{
           ref: payload.ref,
@@ -590,7 +517,6 @@
         logoPreview.style.backgroundImage = '';
         logoPreview.textContent = 'Logo';
       }
-      updateSiretMessage('', 'muted');
       socModal.style.display = 'flex';
     };
     const closeSocModal = () => {
