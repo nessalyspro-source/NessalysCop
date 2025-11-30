@@ -1079,11 +1079,18 @@
                         </label>
                         <label class="flex flex-col text-sm font-medium text-gray-600">
                             Logo (URL)
-                            <input type="text" id="societe-logo" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="https://...">
+                            <div class="mt-2 bg-gray-50 border border-dashed border-gray-200 rounded-xl p-4 flex items-center gap-4">
+                                <div id="societe-logo-preview" class="w-14 h-14 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-[10px] font-semibold text-gray-400 uppercase">Logo</div>
+                                <div class="flex-1">
+                                    <input type="file" id="societe-logo-file" accept="image/*" class="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-sidebar-bg file:text-sidebar-dark hover:file:bg-sidebar-accent/10">
+                                    <p class="text-xs text-gray-400 mt-1">PNG, JPG ou SVG - 2 Mo max.</p>
+                                </div>
+                            </div>
                         </label>
                         <label class="flex flex-col text-sm font-medium text-gray-600">
                             SIRET
-                            <input type="text" id="societe-siret" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="123 456 789 00000">
+                            <input type="text" id="societe-siret" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="123 456 789 00000" maxlength="18">
+                            <p id="societe-siret-feedback" class="text-xs text-gray-500 mt-1"></p>
                         </label>
                         <label class="flex flex-col text-sm font-medium text-gray-600 md:col-span-2">
                             Adresse postale
@@ -1247,9 +1254,11 @@
     <div id="toast" class="fixed left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg hidden z-[60] flex items-center gap-2 w-max max-w-[90%] text-center">
         <i class="fa-solid fa-check text-green-400"></i> Action effectuée
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <script src="./scripts/app.js" defer></script>
 </body>
 </html>
+
 
 
 

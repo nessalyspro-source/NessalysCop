@@ -23,6 +23,12 @@
     let reportStep = 1;
     let societeRef = null;
     let toastTimeout;
+    const SUPABASE_URL = 'https://wirwhmoxndqvlopzvgtf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpcndobW94bmRxdmxvcHp2Z3RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NDMzNjksImV4cCI6MjA4MDAxOTM2OX0.Xp0PuJkglDYoWDq39_d6TuYdDX6ktJ9iJ1TSP2yT5Yc';
+    const SOCIETE_BUCKET = 'societe-assets';
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+    const siretCache = new Map();
+    let lastSiretCheck = { value: null, data: null };
 
     // --- GENERAL UI FUNCTIONS ---
     const toggleSidebar = () => {
@@ -80,6 +86,232 @@
         modal.querySelector('.absolute.inset-0')?.classList.add('opacity-0');
         modal.querySelector('.pointer-events-auto')?.classList.add('translate-x-full');
         setTimeout(() => modal.classList.add('hidden'), 300);
+    };
+
+    // --- SUPABASE HELPERS ---
+    const normalizeSiret = (value = '') => value.replace(/\D/g, '');
+
+    const updateSiretFeedback = (elementId, message, tone = 'muted') => {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        el.classList.remove('text-green-600', 'text-red-500', 'text-gray-500');
+        const toneClass = tone === 'success' ? 'text-green-600' : tone === 'error' ? 'text-red-500' : 'text-gray-500';
+        el.classList.add(toneClass);
+        el.textContent = message || '';
+    };
+
+    const buildAddressFromSirene = (etablissement) => {
+        if (!etablissement) return '';
+        const adresse = etablissement.adresseEtablissement || {};
+        const voie = [
+            adresse.numeroVoieEtablissement,
+            adresse.indiceRepetitionEtablissement,
+            adresse.typeVoieEtablissement,
+            adresse.libelleVoieEtablissement
+        ].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+        const postal = adresse.codePostalEtablissement;
+        const city = adresse.libelleCommuneEtablissement || adresse.libelleCedexEtablissement;
+        return [voie, postal, city].filter(Boolean).join(' ');
+    };
+
+    const fetchSiretData = async (siret, feedbackId) => {
+        const normalized = normalizeSiret(siret);
+        if (!normalized) {
+            updateSiretFeedback(feedbackId, '', 'muted');
+            return null;
+        }
+        if (normalized.length !== 14) {
+            updateSiretFeedback(feedbackId, 'Le SIRET doit contenir 14 chiffres.', 'error');
+            return null;
+        }
+        if (lastSiretCheck.value === normalized) {
+            updateSiretFeedback(feedbackId, 'SIRET vérifié', 'success');
+            return lastSiretCheck.data;
+        }
+        updateSiretFeedback(feedbackId, 'Vérification officielle en cours...', 'muted');
+        try {
+            if (siretCache.has(normalized)) {
+                const cached = siretCache.get(normalized);
+                updateSiretFeedback(feedbackId, 'SIRET vérifié', 'success');
+                lastSiretCheck = { value: normalized, data: cached };
+                return cached;
+            }
+            const response = await fetch(`https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/${normalized}`);
+            if (!response.ok) {
+                updateSiretFeedback(feedbackId, 'SIRET introuvable dans la base officielle.', 'error');
+                return null;
+            }
+            const json = await response.json();
+            siretCache.set(normalized, json);
+            lastSiretCheck = { value: normalized, data: json };
+            updateSiretFeedback(feedbackId, 'SIRET vérifié', 'success');
+            return json;
+        } catch (error) {
+            console.error('Erreur API SIRET', error);
+            updateSiretFeedback(feedbackId, 'Impossible de vérifier le SIRET pour le moment.', 'error');
+            return null;
+        }
+    };
+
+    const attachSiretWatcher = (inputId, feedbackId, addressId) => {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        input.addEventListener('blur', async () => {
+            const data = await fetchSiretData(input.value, feedbackId);
+            if (!data) return;
+            const formatted = buildAddressFromSirene(data.etablissement);
+            const addressInput = document.getElementById(addressId);
+            if (formatted && addressInput && !addressInput.value) {
+                addressInput.value = formatted;
+            }
+        });
+    };
+
+    const attachSocieteLogoPreview = (inputId, previewId) => {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        if (!input || !preview) return;
+        input.addEventListener('change', () => {
+            const file = input.files?.[0];
+            if (!file) {
+                preview.style.backgroundImage = '';
+                preview.textContent = 'Logo';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => {
+                preview.style.backgroundImage = `url('${reader.result}')`;
+                preview.style.backgroundSize = 'cover';
+                preview.style.backgroundPosition = 'center';
+                preview.textContent = '';
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const uploadSocieteLogo = async (file, reference) => {
+        if (!file || !supabaseClient) return { path: null, url: null };
+        const safeRef = reference || `SCT-${Date.now()}`;
+        const extension = (file.name.split('.').pop() || 'png').toLowerCase();
+        const path = `logos/${safeRef}/${Date.now()}.${extension}`;
+        const { error } = await supabaseClient.storage.from(SOCIETE_BUCKET).upload(path, file, {
+            cacheControl: '3600',
+            upsert: true
+        });
+        if (error) throw new Error(`Upload du logo impossible : ${error.message}`);
+        const { data } = supabaseClient.storage.from(SOCIETE_BUCKET).getPublicUrl(path);
+        return { path, url: data?.publicUrl || null };
+    };
+
+    const upsertTrialLimits = async (societeId, trialEnabled) => {
+        if (!supabaseClient || !societeId) return;
+        const payload = {
+            societe_id: societeId,
+            clients_limit: trialEnabled ? 2 : null,
+            contracts_limit: trialEnabled ? 5 : null,
+            employees_limit: trialEnabled ? 5 : null
+        };
+        const { error } = await supabaseClient.from('societe_limits').upsert(payload, { onConflict: 'societe_id' });
+        if (error) throw new Error(`Impossible de définir les limites : ${error.message}`);
+    };
+
+    const collectSocieteFormData = () => {
+        const getVal = (id) => document.getElementById(id)?.value?.trim() || '';
+        const reference = getVal('societe-ref');
+        const rawSiret = getVal('societe-siret');
+        const normalizedSiret = normalizeSiret(rawSiret);
+        const trialEnabled = document.getElementById('essaie-30')?.checked || false;
+        const now = new Date();
+        const contact = {
+            role_label: getVal('contact-statut'),
+            first_name: getVal('contact-prenom'),
+            last_name: getVal('contact-nom'),
+            email: getVal('contact-email'),
+            phone: getVal('contact-tel')
+        };
+        const hasContact = Object.values(contact).some(Boolean);
+        return {
+            reference,
+            name: getVal('societe-nom'),
+            logoFile: document.getElementById('societe-logo-file')?.files?.[0] || null,
+            siret: normalizedSiret,
+            address: getVal('societe-adresse'),
+            email: getVal('societe-email'),
+            phone: getVal('societe-tel'),
+            type: document.getElementById('societe-type')?.value || '',
+            remisePercent: parseFloat(getVal('remise-pct')) || null,
+            remiseMois: parseInt(getVal('remise-mois'), 10) || null,
+            trialEnabled,
+            trialStartedAt: trialEnabled ? now.toISOString() : null,
+            trialExpiresAt: trialEnabled ? new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString() : null,
+            contact: hasContact ? contact : null
+        };
+    };
+
+    const setSocieteModalLoading = (isLoading) => {
+        const btn = document.querySelector('[data-action="save-societe"]');
+        if (!btn) return;
+        btn.disabled = isLoading;
+        btn.classList.toggle('opacity-60', isLoading);
+        btn.innerHTML = isLoading ? '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Enregistrement...' : 'Enregistrer';
+    };
+
+    const handleSocieteSave = async () => {
+        if (!supabaseClient) {
+            showToast('Supabase non initialisé');
+            return;
+        }
+        const formData = collectSocieteFormData();
+        if (!formData.name) {
+            showToast('Le nom de la société est requis');
+            return;
+        }
+        if (formData.siret.length !== 14) {
+            showToast('Le SIRET doit contenir 14 chiffres');
+            return;
+        }
+        setSocieteModalLoading(true);
+        try {
+            const sirenePayload = await fetchSiretData(formData.siret, 'societe-siret-feedback');
+            if (!sirenePayload) throw new Error('Vérifiez le numéro de SIRET');
+            const adresseSirene = buildAddressFromSirene(sirenePayload.etablissement);
+            if (adresseSirene && !formData.address) {
+                const addressInput = document.getElementById('societe-adresse');
+                if (addressInput) addressInput.value = adresseSirene;
+                formData.address = adresseSirene;
+            }
+            const logoInfo = await uploadSocieteLogo(formData.logoFile, formData.reference);
+            const insertPayload = {
+                ref: formData.reference,
+                name: formData.name,
+                siret: formData.siret,
+                address_line1: formData.address || null,
+                email: formData.email || null,
+                phone: formData.phone || null,
+                type_activite: formData.type || null,
+                remise_percent: formData.remisePercent,
+                remise_mois: formData.remiseMois,
+                trial_enabled: formData.trialEnabled,
+                trial_started_at: formData.trialStartedAt,
+                trial_expires_at: formData.trialExpiresAt,
+                base_price_ht: 29.99,
+                logo_storage_path: logoInfo.path,
+                logo_public_url: logoInfo.url
+            };
+            const { data: createdSociete, error } = await supabaseClient.from('societes').insert([insertPayload]).select().single();
+            if (error) throw error;
+            if (formData.contact) {
+                await supabaseClient.from('societe_contacts').insert([{ ...formData.contact, societe_id: createdSociete.id }]);
+            }
+            await upsertTrialLimits(createdSociete.id, formData.trialEnabled);
+            showToast('Société créée');
+            closeSocieteModal();
+        } catch (error) {
+            console.error('Erreur création société', error);
+            showToast(error.message || 'Erreur lors de la création');
+        } finally {
+            setSocieteModalLoading(false);
+        }
     };
 
     // --- REPORT MODAL (Rapport) ---
@@ -328,9 +560,18 @@
         setVal('societe-ref', societeRef);
         const label = document.getElementById('societe-ref-label');
         if (label) label.innerText = `Ref: ${societeRef}`;
-        ['societe-nom','societe-logo','societe-siret','societe-adresse','societe-email','societe-tel','contact-statut','contact-prenom','contact-nom','contact-email','contact-tel','societe-type','remise-pct','remise-mois'].forEach(id => setVal(id, ""));
+        ['societe-nom','societe-siret','societe-adresse','societe-email','societe-tel','contact-statut','contact-prenom','contact-nom','contact-email','contact-tel','societe-type','remise-pct','remise-mois'].forEach(id => setVal(id, ""));
         const chk = document.getElementById('essaie-30');
         if (chk) chk.checked = false;
+        const logoInput = document.getElementById('societe-logo-file');
+        if (logoInput) logoInput.value = '';
+        const logoPreview = document.getElementById('societe-logo-preview');
+        if (logoPreview) {
+            logoPreview.style.backgroundImage = '';
+            logoPreview.textContent = 'Logo';
+        }
+        updateSiretFeedback('societe-siret-feedback', '');
+        lastSiretCheck = { value: null, data: null };
     };
     const openSocieteModal = () => {
         resetSocieteModal();
@@ -865,6 +1106,8 @@
     const init = () => {
         switchView('dashboard');
         setupAddressAutocomplete();
+        attachSocieteLogoPreview('societe-logo-file', 'societe-logo-preview');
+        attachSiretWatcher('societe-siret', 'societe-siret-feedback', 'societe-adresse');
         
         document.body.addEventListener('click', (e) => {
             const actionTarget = e.target.closest('[data-action]');
@@ -1071,8 +1314,7 @@
                     closeSocieteModal();
                     break;
                 case 'save-societe':
-                    showToast('Société créée (simulation)');
-                    closeSocieteModal();
+                    handleSocieteSave();
                     break;
                 case 'close-employee-detail':
                     closeModal('employee-detail-modal');
@@ -1184,3 +1426,4 @@
                 populateEmployeeDetail(card.dataset.contractId); // TODO: replace with contract detail when ready
             });
         });
+
