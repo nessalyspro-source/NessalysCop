@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nessaly's Group - Administrateur</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #060a14; --glass: rgba(255,255,255,0.04); --border: rgba(255,255,255,0.08); --teal:#22c55e; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:'Manrope',sans-serif; background:var(--bg); color:#e2e8f0; min-height:100vh; display:flex; flex-direction:column; }
+    .glass { background:var(--glass); border:1px solid var(--border); backdrop-filter:blur(10px); box-shadow:0 20px 50px rgba(0,0,0,0.35); }
+    a { color:inherit; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <nav class="glass" style="position:fixed;top:0;left:0;right:0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;z-index:10;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="glass" style="width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--teal);"><i class="fa-regular fa-building"></i></div>
+      <div>
+        <div style="font-weight:800;letter-spacing:0.04em;">Admin Nessaly's</div>
+        <div style="font-size:12px;color:#94a3b8;">Espace securise</div>
+      </div>
+    </div>
+    <button id="logout-btn" style="background:var(--teal);color:#041015;border:none;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;">Deconnexion</button>
+  </nav>
+
+  <main style="flex:1;max-width:1100px;margin:100px auto 40px auto;padding:0 20px;display:grid;gap:20px;">
+    <section class="glass" style="padding:20px;border-radius:16px;">
+      <h1 style="margin:0 0 6px 0;font-size:26px;">Tableau de bord admin</h1>
+      <p style="margin:0;color:#94a3b8;font-size:14px;">Connecte en tant que <span id="admin-email">-</span></p>
+    </section>
+    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;">
+      <div class="glass" style="padding:18px;border-radius:14px;">
+        <p style="font-size:13px;color:#94a3b8;margin:0 0 4px 0;">Actions rapides</p>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+          <li><a href="index.html" style="color:var(--teal);font-weight:700;">Portail interne</a></li>
+          <li><a href="#" style="color:var(--teal);font-weight:700;">Gestion utilisateurs</a></li>
+          <li><a href="#" style="color:var(--teal);font-weight:700;">Parametres</a></li>
+        </ul>
+      </div>
+      <div class="glass" style="padding:18px;border-radius:14px;">
+        <p style="font-size:13px;color:#94a3b8;margin:0 0 4px 0;">Statut</p>
+        <p style="margin:0;font-weight:700;color:#cbd5e1;">Connecte via Supabase Auth</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="glass" style="padding:14px 20px;text-align:center;font-size:12px;color:#94a3b8;">
+    © 2025 Nessaly's Group — Espace Administrateur
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://wirwhmoxndqvlopzvgtf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpcndobW94bmRxdmxvcHp2Z3RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NDMzNjksImV4cCI6MjA4MDAxOTM2OX0.Xp0PuJkglDYoWDq39_d6TuYdDX6ktJ9iJ1TSP2yT5Yc';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function ensureSession() {
+      const { data } = await supabaseClient.auth.getSession();
+      const user = data?.session?.user;
+      if (!user) {
+        window.location.href = 'Accueil.html#admin-login';
+        return;
+      }
+      document.getElementById('admin-email').textContent = user.email || '-';
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'Accueil.html#admin-login';
+    });
+
+    ensureSession();
+  </script>
+</body>
+</html>
