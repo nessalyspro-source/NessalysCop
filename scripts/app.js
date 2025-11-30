@@ -21,6 +21,7 @@
     let reportAttendees = [];
     let reportSections = [];
     let reportStep = 1;
+    let societeRef = null;
     let toastTimeout;
 
     // --- GENERAL UI FUNCTIONS ---
@@ -315,6 +316,27 @@
         document.getElementById('report-modal-panel')?.classList.add('translate-x-full');
         setTimeout(() => modal.classList.add('hidden'), 300);
     };
+
+    // --- SOCIETE MODAL ---
+    const generateSocieteRef = () => {
+        const now = Date.now().toString();
+        return `SCT-${now.slice(-6)}`;
+    };
+    const resetSocieteModal = () => {
+        societeRef = generateSocieteRef();
+        const setVal = (id, val = "") => { const el = document.getElementById(id); if (el) el.value = val; };
+        setVal('societe-ref', societeRef);
+        const label = document.getElementById('societe-ref-label');
+        if (label) label.innerText = `Ref: ${societeRef}`;
+        ['societe-nom','societe-logo','societe-siret','societe-adresse','societe-email','societe-tel','contact-statut','contact-prenom','contact-nom','contact-email','contact-tel','societe-type','remise-pct','remise-mois'].forEach(id => setVal(id, ""));
+        const chk = document.getElementById('essaie-30');
+        if (chk) chk.checked = false;
+    };
+    const openSocieteModal = () => {
+        resetSocieteModal();
+        openModal('create-societe-modal');
+    };
+    const closeSocieteModal = () => closeModal('create-societe-modal');
 
     // --- EMPLOYEE MODAL ---
     const generateEmployeeCode = () => {
@@ -1041,6 +1063,16 @@
                 case 'save-employee':
                     showToast('Employe cree (simulation)');
                     closeEmployeeModal();
+                    break;
+                case 'open-create-societe':
+                    openSocieteModal();
+                    break;
+                case 'close-create-societe':
+                    closeSocieteModal();
+                    break;
+                case 'save-societe':
+                    showToast('Société créée (simulation)');
+                    closeSocieteModal();
                     break;
                 case 'close-employee-detail':
                     closeModal('employee-detail-modal');

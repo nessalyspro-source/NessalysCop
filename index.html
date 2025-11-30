@@ -165,7 +165,10 @@
             <div id="view-clients" class="p-4 md:p-8 max-w-7xl mx-auto hidden fade-in">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sidebar-bg border border-sidebar-border text-sidebar-dark font-semibold text-sm tracking-wide shadow-sm"><span class="w-2 h-2 rounded-full bg-sidebar-accent"></span> Gestion des clients</div>
-                    <button data-action="open-create-client" class="w-full md:w-auto bg-sidebar-dark hover:bg-sidebar-accent text-white px-5 py-2.5 rounded-xl shadow-lg shadow-sidebar-dark/20 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5"><i class="fa-solid fa-plus"></i> <span class="font-medium text-sm">Créer un client</span></button>
+                    <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                        <button data-action="open-create-societe" class="w-full md:w-auto bg-white border border-sidebar-border text-sidebar-dark hover:bg-sidebar-accent hover:text-white px-5 py-2.5 rounded-xl shadow-lg shadow-sidebar-dark/10 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5"><i class="fa-solid fa-building"></i> <span class="font-medium text-sm">Créer une société</span></button>
+                        <button data-action="open-create-client" class="w-full md:w-auto bg-sidebar-dark hover:bg-sidebar-accent text-white px-5 py-2.5 rounded-xl shadow-lg shadow-sidebar-dark/20 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5"><i class="fa-solid fa-plus"></i> <span class="font-medium text-sm">Créer un client</span></button>
+                    </div>
                 </div>
                 <div class="mb-6 w-full md:max-w-md"><div class="relative"><input type="text" placeholder="Rechercher..." class="w-full bg-white border border-gray-200 text-sm rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-sidebar-accent/20 focus:border-sidebar-accent transition-all shadow-sm text-sidebar-text"><i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i></div></div>
                 <hr class="border-gray-200 mb-8">
@@ -898,7 +901,7 @@
         </div>
     </div>
       
-      <!-- MODAL EDIT CLIENT -->
+    <!-- MODAL EDIT CLIENT -->
       <div id="edit-client-modal" class="fixed inset-0 z-60 hidden" aria-labelledby="edit-client-title" role="dialog" aria-modal="true">
           <div data-action="close-edit-client" class="absolute inset-0 bg-gray-900/30 backdrop-blur-md transition-opacity duration-300 opacity-0"></div>
           <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full">
@@ -1045,6 +1048,114 @@
                 </div>
                 <div class="px-8 py-5 border-t border-gray-100 bg-white flex justify-end">
                     <button data-action="save-employee" class="bg-sidebar-dark hover:bg-sidebar-accent text-white px-5 py-3 rounded-xl font-medium transition-colors shadow-sm">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- MODAL CREER SOCIETE -->
+    <div id="create-societe-modal" class="fixed inset-0 z-60 hidden" aria-labelledby="create-societe-title" role="dialog" aria-modal="true">
+        <div data-action="close-create-societe" class="absolute inset-0 bg-gray-900/30 backdrop-blur-md transition-opacity duration-300 opacity-0"></div>
+        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full">
+            <div class="pointer-events-auto w-full md:w-[92%] lg:w-[70%] max-w-[1100px] ml-auto transform transition ease-in-out duration-300 translate-x-full bg-white shadow-2xl flex flex-col h-full rounded-none md:rounded-l-2xl overflow-hidden">
+                <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-start gap-4">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.6em] text-sidebar-muted">Créer une société</p>
+                        <h2 id="create-societe-title" class="text-2xl font-bold text-sidebar-dark">Créer une société</h2>
+                        <p class="text-sm text-gray-500 mt-1 font-mono" id="societe-ref-label">Ref: -</p>
+                    </div>
+                    <button data-action="close-create-societe" class="text-gray-400 hover:text-gray-800 transition-colors p-2 rounded-xl">
+                        <i class="fa-solid fa-xmark text-2xl"></i>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="flex flex-col text-sm font-medium text-gray-600">
+                            Référence (activation)
+                            <input type="text" id="societe-ref" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm bg-gray-50 text-gray-600" readonly />
+                        </label>
+                        <label class="flex flex-col text-sm font-medium text-gray-600">
+                            Nom de la société*
+                            <input type="text" id="societe-nom" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Ex : Société Alpha">
+                        </label>
+                        <label class="flex flex-col text-sm font-medium text-gray-600">
+                            Logo (URL)
+                            <input type="text" id="societe-logo" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="https://...">
+                        </label>
+                        <label class="flex flex-col text-sm font-medium text-gray-600">
+                            SIRET
+                            <input type="text" id="societe-siret" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="123 456 789 00000">
+                        </label>
+                        <label class="flex flex-col text-sm font-medium text-gray-600 md:col-span-2">
+                            Adresse postale
+                            <input type="text" id="societe-adresse" data-address-input class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Ex : 12 rue du Port, 75002 Paris">
+                        </label>
+                        <label class="flex flex-col text-sm font-medium text-gray-600">
+                            Email
+                            <input type="email" id="societe-email" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="contact@societe.com">
+                        </label>
+                        <label class="flex flex-col text-sm font-medium text-gray-600">
+                            Téléphone
+                            <input type="tel" id="societe-tel" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="06 00 00 00 00">
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white border border-gray-100 rounded-3xl p-5 space-y-3">
+                            <p class="text-xs uppercase tracking-[0.4em] text-gray-400">Contact principal</p>
+                            <label class="flex flex-col text-sm font-medium text-gray-600">
+                                Statut
+                                <input type="text" id="contact-statut" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Président, Gérant...">
+                            </label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <label class="flex flex-col text-sm font-medium text-gray-600">
+                                    Prénom
+                                    <input type="text" id="contact-prenom" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent">
+                                </label>
+                                <label class="flex flex-col text-sm font-medium text-gray-600">
+                                    Nom
+                                    <input type="text" id="contact-nom" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent">
+                                </label>
+                            </div>
+                            <label class="flex flex-col text-sm font-medium text-gray-600">
+                                Email
+                                <input type="email" id="contact-email" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent">
+                            </label>
+                            <label class="flex flex-col text-sm font-medium text-gray-600">
+                                Téléphone
+                                <input type="tel" id="contact-tel" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent">
+                            </label>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-3xl p-5 space-y-3">
+                            <p class="text-xs uppercase tracking-[0.4em] text-gray-400">Type & conditions</p>
+                            <label class="flex flex-col text-sm font-medium text-gray-600">
+                                Type de société
+                                <select id="societe-type" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent">
+                                    <option value="">Choisir...</option>
+                                    <option>Ménage</option>
+                                    <option>Dératisation / Désinsectisation</option>
+                                    <option>Sécurité incendie</option>
+                                    <option>Ascensoriste</option>
+                                    <option>Espaces verts</option>
+                                    <option>Autre</option>
+                                </select>
+                            </label>
+                            <label class="flex flex-col text-sm font-medium text-gray-600">
+                                Remise commerciale
+                                <div class="grid grid-cols-2 gap-2 mt-2">
+                                    <input type="number" id="remise-pct" min="0" max="100" class="rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="%">
+                                    <input type="number" id="remise-mois" min="0" class="rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Mois">
+                                </div>
+                                <span class="text-xs text-gray-500 mt-1">Prix de base : 29,99 € HT / mois</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-600">
+                                <input type="checkbox" id="essaie-30" class="rounded border-gray-300 text-sidebar-accent focus:ring-sidebar-accent">
+                                Activer un essai 30 jours (limite 2 clients, 5 contrats, 5 employés)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-8 py-5 border-t border-gray-100 bg-white flex justify-end">
+                    <button data-action="close-create-societe" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl font-medium transition-colors mr-2">Annuler</button>
+                    <button data-action="save-societe" class="bg-sidebar-dark hover:bg-sidebar-accent text-white px-5 py-3 rounded-xl font-medium transition-colors shadow-sm">Enregistrer</button>
                 </div>
             </div>
         </div>
