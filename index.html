@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -10,6 +10,70 @@
     <link rel="stylesheet" href="./assets/styles.css">
     <script src="https://unpkg.com/signature_pad"></script>
     <script src="./scripts/tailwind-config.js"></script>
+    <style>
+        .step-track {
+            background: #e6f4f1;
+        }
+        .step-progress-track {
+            background: #b8d8d4;
+            border-radius: 999px;
+            height: 4px;
+            overflow: hidden;
+        }
+        .step-progress-fill {
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(120deg, #2a9d8f, #264653);
+            transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 20px rgba(38, 70, 85, 0.25);
+        }
+        .step-dot {
+            transition: transform 0.4s ease, background 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+            background: #b8d8d4;
+            color: #264653;
+        }
+        .step-dot-active {
+            transform: scale(1.08);
+            background: linear-gradient(135deg, #2a9d8f, #264653);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 12px 30px rgba(38, 83, 109, 0.35);
+        }
+        .step-label {
+            transition: color 0.3s ease, opacity 0.3s ease;
+            color: #264653;
+        }
+        .step-label-muted {
+            opacity: 0.7;
+            color: #4a555b;
+        }
+        #toast {
+            top: 12px;
+            bottom: auto;
+            transform: translate(-50%, -120%);
+        }
+        #toast.toast-active {
+            animation: slideDownUp 3s forwards;
+        }
+        @keyframes slideDownUp {
+            0% {
+                transform: translate(-50%, -120%);
+                opacity: 0;
+            }
+            10% {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+            90% {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -120%);
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-50 h-screen flex overflow-hidden font-sans relative">
 
@@ -59,10 +123,7 @@
                 <i class="fa-regular fa-clipboard-list w-5 text-center text-sidebar-muted group-hover:text-sidebar-accent"></i>
                 <span>Rapports</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sidebar-text hover:bg-white/60 hover:text-sidebar-accent rounded-lg font-medium transition-all duration-200 group">
-                <i class="fa-regular fa-address-card w-5 text-center text-sidebar-muted group-hover:text-sidebar-accent"></i>
-                <span>Employés</span>
-            </a>
+            <a href="#" data-action="switch-view" data-view="employes" id="nav-employes" class="nav-item flex items-center gap-3 px-4 py-3 text-sidebar-text hover:bg-white/60 hover:text-sidebar-accent rounded-lg font-medium transition-all duration-200 group"><i class="fa-regular fa-address-card w-5 text-center text-sidebar-muted group-hover:text-sidebar-accent"></i><span>Employes</span></a>
         </nav>
 
         <div class="p-6 mt-auto">
@@ -109,15 +170,15 @@
                 <div class="mb-6 w-full md:max-w-md"><div class="relative"><input type="text" placeholder="Rechercher..." class="w-full bg-white border border-gray-200 text-sm rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-sidebar-accent/20 focus:border-sidebar-accent transition-all shadow-sm text-sidebar-text"><i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i></div></div>
                 <hr class="border-gray-200 mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pb-20">
-                     <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-md hover:border-sidebar-border transition-all duration-300 p-6 relative group cursor-pointer active:scale-[0.98]" data-client-id="1">
-                        <div class="flex justify-between items-start mb-4"><span class="bg-blue-100 text-badge-direct px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-blue-200">Client Direct</span><div class="flex gap-2 opacity-100 md:opacity-50 group-hover:opacity-100 transition-opacity"><button data-action="edit-client" class="w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-sidebar-accent flex items-center justify-center"><i class="fa-regular fa-pen-to-square text-sm"></i></button><button data-action="delete-client" class="w-8 h-8 rounded-lg hover:bg-red-50 text-gray-500 hover:text-red-500 flex items-center justify-center"><i class="fa-regular fa-trash-can text-sm"></i></button></div></div>
-                        <div class="mb-6"><div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-xl text-gray-500 mb-3 border border-gray-200"><i class="fa-regular fa-user"></i></div><h3 class="text-lg font-bold text-sidebar-dark leading-tight">M. Jean Dupont</h3><p class="text-xs text-gray-400 mt-1 font-mono">CLI-2023-089</p></div>
-                        <div class="space-y-3 pt-4 border-t border-gray-50"><div class="flex items-center justify-between group/line"><div class="flex items-center gap-3 overflow-hidden"><i class="fa-regular fa-envelope text-gray-400 text-xs w-4"></i><span class="text-sm text-gray-600 truncate">jean.dupont@email.com</span></div><button data-action="copy-text" data-text="jean.dupont@email.com" class="text-gray-300 hover:text-sidebar-accent p-1.5 rounded transition-colors md:opacity-0 group-hover/line:opacity-100"><i class="fa-regular fa-copy text-xs"></i></button></div></div>
+                     <div data-action="open-client-detail" class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-md hover:border-sidebar-border transition-all duration-300 p-6 relative group cursor-pointer active:scale-[0.98]" data-client-id="1">
+                        <div class="flex justify-between items-start mb-4"><span data-client-badge class="bg-blue-100 text-badge-direct px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-blue-200">Client Direct</span><div class="flex gap-2 opacity-100 md:opacity-50 group-hover:opacity-100 transition-opacity"><button data-action="edit-client" class="w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-sidebar-accent flex items-center justify-center"><i class="fa-regular fa-pen-to-square text-sm"></i></button><button data-action="delete-client" class="w-8 h-8 rounded-lg hover:bg-red-50 text-gray-500 hover:text-red-500 flex items-center justify-center"><i class="fa-regular fa-trash-can text-sm"></i></button></div></div>
+                        <div class="mb-6"><div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-xl text-gray-500 mb-3 border border-gray-200"><i class="fa-regular fa-user"></i></div><h3 data-client-name class="text-lg font-bold text-sidebar-dark leading-tight">M. Jean Dupont</h3><p class="text-xs text-gray-400 mt-1 font-mono">CLI-2023-089</p></div>
+                        <div class="space-y-3 pt-4 border-t border-gray-50"><div class="flex items-center justify-between group/line"><div class="flex items-center gap-3 overflow-hidden"><i class="fa-regular fa-envelope text-gray-400 text-xs w-4"></i><span data-client-email class="text-sm text-gray-600 truncate">jean.dupont@email.com</span></div><button data-action="copy-text" data-text="jean.dupont@email.com" class="text-gray-300 hover:text-sidebar-accent p-1.5 rounded transition-colors md:opacity-0 group-hover/line:opacity-100"><i class="fa-regular fa-copy text-xs"></i></button></div></div>
                     </div>
-                     <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-md hover:border-sidebar-border transition-all duration-300 p-6 relative group cursor-pointer active:scale-[0.98]" data-client-id="2">
-                        <div class="flex justify-between items-start mb-4"><span class="bg-purple-100 text-badge-mandataire px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-purple-200">Mandataire</span><div class="flex gap-2 opacity-100 md:opacity-50 group-hover:opacity-100 transition-opacity"><button data-action="edit-client" class="w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-sidebar-accent flex items-center justify-center"><i class="fa-regular fa-pen-to-square text-sm"></i></button><button data-action="delete-client" class="w-8 h-8 rounded-lg hover:bg-red-50 text-gray-500 hover:text-red-500 flex items-center justify-center"><i class="fa-regular fa-trash-can text-sm"></i></button></div></div>
-                        <div class="mb-6"><div class="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center text-xl text-badge-mandataire mb-3 border border-purple-100"><i class="fa-solid fa-building"></i></div><h3 class="text-lg font-bold text-sidebar-dark leading-tight">Agence Immo 2000</h3><p class="text-xs text-gray-400 mt-1 font-mono">CLI-2023-090</p></div>
-                        <div class="space-y-3 pt-4 border-t border-gray-50"><div class="flex items-center justify-between group/line"><div class="flex items-center gap-3 overflow-hidden"><i class="fa-regular fa-envelope text-gray-400 text-xs w-4"></i><span class="text-sm text-gray-600 truncate">contact@immo2000.fr</span></div><button data-action="copy-text" data-text="contact@immo2000.fr" class="text-gray-300 hover:text-sidebar-accent p-1.5 rounded transition-colors md:opacity-0 group-hover/line:opacity-100"><i class="fa-regular fa-copy text-xs"></i></button></div></div>
+                     <div data-action="open-client-detail" class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-md hover:border-sidebar-border transition-all duration-300 p-6 relative group cursor-pointer active:scale-[0.98]" data-client-id="2">
+                        <div class="flex justify-between items-start mb-4"><span data-client-badge class="bg-purple-100 text-badge-mandataire px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-purple-200">Mandataire</span><div class="flex gap-2 opacity-100 md:opacity-50 group-hover:opacity-100 transition-opacity"><button data-action="edit-client" class="w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-sidebar-accent flex items-center justify-center"><i class="fa-regular fa-pen-to-square text-sm"></i></button><button data-action="delete-client" class="w-8 h-8 rounded-lg hover:bg-red-50 text-gray-500 hover:text-red-500 flex items-center justify-center"><i class="fa-regular fa-trash-can text-sm"></i></button></div></div>
+                        <div class="mb-6"><div class="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center text-xl text-badge-mandataire mb-3 border border-purple-100"><i class="fa-solid fa-building"></i></div><h3 data-client-name class="text-lg font-bold text-sidebar-dark leading-tight">Agence Immo 2000</h3><p class="text-xs text-gray-400 mt-1 font-mono">CLI-2023-090</p></div>
+                        <div class="space-y-3 pt-4 border-t border-gray-50"><div class="flex items-center justify-between group/line"><div class="flex items-center gap-3 overflow-hidden"><i class="fa-regular fa-envelope text-gray-400 text-xs w-4"></i><span data-client-email class="text-sm text-gray-600 truncate">contact@immo2000.fr</span></div><button data-action="copy-text" data-text="contact@immo2000.fr" class="text-gray-300 hover:text-sidebar-accent p-1.5 rounded transition-colors md:opacity-0 group-hover/line:opacity-100"><i class="fa-regular fa-copy text-xs"></i></button></div></div>
                     </div>
                 </div>
             </div>
@@ -130,14 +191,7 @@
                 </div>
                 <div class="mb-6 w-full md:max-w-md"><div class="relative"><input type="text" placeholder="Rechercher un contrat..." class="w-full bg-white border border-gray-200 text-sm rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-sidebar-accent/20 focus:border-sidebar-accent transition-all shadow-sm text-sidebar-text"><i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i></div></div>
                 <hr class="border-gray-200 mb-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pb-20">
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-md hover:border-sidebar-border transition-all duration-300 p-6 relative group cursor-pointer active:scale-[0.98]" data-contract-id="1">
-                <div class="flex justify-between items-start mb-4"><span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-green-200">Actif</span><div class="flex gap-2 opacity-100 md:opacity-50 group-hover:opacity-100 transition-opacity"><button data-action="edit-contract" class="w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-sidebar-accent flex items-center justify-center"><i class="fa-regular fa-pen-to-square text-sm"></i></button><button data-action="delete-contract" class="w-8 h-8 rounded-lg hover:bg-red-50 text-gray-500 hover:text-red-500 flex items-center justify-center"><i class="fa-regular fa-trash-can text-sm"></i></button></div></div>
-                        <div class="mb-6"><div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-xl text-blue-500 mb-3 border border-blue-100"><i class="fa-regular fa-file-lines"></i></div><h3 class="text-lg font-bold text-sidebar-dark leading-tight">Maintenance Mensuelle</h3><p class="text-xs text-gray-400 mt-1 font-mono">CTR-2023-452</p></div>
-                        <div class="space-y-3 pt-4 border-t border-gray-50"><div class="flex items-center gap-3"><i class="fa-regular fa-user text-gray-400 text-xs w-4"></i><span class="text-sm text-gray-600">Agence Immo 2000</span></div><div class="flex items-center gap-3"><i class="fa-regular fa-calendar text-gray-400 text-xs w-4"></i><span class="text-sm text-gray-600">Fin: 31/12/2024</span></div></div>
-                    </div>
-                     <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-md hover:border-sidebar-border transition-all duration-300 p-6 relative group cursor-pointer active:scale-[0.98]" data-contract-id="2">
-                <div class="flex justify-between items-start mb-4"><span class="bg-amber-100 text-amber-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-amber-200">En Attente</span><div class="flex gap-2 opacity-100 md:opacity-50 group-hover:opacity-100 transition-opacity"><button data-action="edit-contract" class="w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-sidebar-accent flex items-center justify-center"><i class="fa-regular fa-pen-to-square text-sm"></i></button><button data-action="delete-contract" class="w-8 h-8 rounded-lg hover:bg-red-50 text-gray-500 hover:text-red-500 flex items-center justify-center"><i class="fa-regular fa-trash-can text-sm"></i></button></div></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pb-20">\n    <div class="col-span-full bg-white border border-dashed border-sidebar-border rounded-2xl p-6 text-center text-gray-500">Aucune donnée. Connectez Supabase pour afficher les contrats.</div>\n</div>
                         <div class="mb-6"><div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-xl text-gray-500 mb-3 border border-gray-200"><i class="fa-regular fa-file"></i></div><h3 class="text-lg font-bold text-sidebar-dark leading-tight">Audit Sécurité</h3><p class="text-xs text-gray-400 mt-1 font-mono">CTR-2023-480</p></div>
                         <div class="space-y-3 pt-4 border-t border-gray-50"><div class="flex items-center gap-3"><i class="fa-regular fa-user text-gray-400 text-xs w-4"></i><span class="text-sm text-gray-600">M. Jean Dupont</span></div><div class="flex items-center gap-3"><i class="fa-regular fa-calendar text-gray-400 text-xs w-4"></i><span class="text-sm text-gray-600">Début: 01/11/2023</span></div></div>
                     </div>
@@ -210,11 +264,36 @@
                 <div class="mb-6 w-full md:max-w-md"><div class="relative"><input type="text" placeholder="Rechercher un rapport..." class="w-full bg-white border border-gray-200 text-sm rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-sidebar-accent/20 focus:border-sidebar-accent transition-all shadow-sm text-sidebar-text"><i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i></div></div>
                 <hr class="border-gray-200 mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pb-20" id="rapports-grid">
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-md hover:border-sidebar-border transition-all duration-300 p-6 relative group cursor-pointer active:scale-[0.98]">
-                        <div class="flex justify-between items-start mb-4"><span class="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-blue-100">Visite Mensuelle</span><span class="text-xs text-gray-400">29 Nov 2025</span></div>
-                        <h3 class="text-lg font-bold text-sidebar-dark leading-tight mb-1">Maintenance Chaufferie</h3><p class="text-xs text-gray-500 mb-4">Site Alpha Logistics</p>
-                        <div class="flex items-center -space-x-2 overflow-hidden mb-4"><div class="inline-block h-6 w-6 rounded-full ring-2 ring-white bg-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-600">TM</div><div class="inline-block h-6 w-6 rounded-full ring-2 ring-white bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600">JD</div></div>
-                        <div class="pt-3 border-t border-gray-50 flex justify-between items-center text-xs"><span class="text-green-600 font-medium flex items-center gap-1"><i class="fa-solid fa-check-circle"></i> Signé</span><span class="text-gray-400">Archivé 1 an</span></div>
+    <div class="col-span-full bg-white border border-dashed border-sidebar-border rounded-2xl p-6 text-center text-gray-500">Aucun rapport. Connectez Supabase pour afficher l'historique.</div>
+</div>
+            </div>
+            </div>
+
+            <!-- VUE EMPLOYES -->
+            <div id="view-employes" class="p-4 md:p-8 max-w-7xl mx-auto hidden fade-in">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sidebar-bg border border-sidebar-border text-sidebar-dark font-semibold text-sm tracking-wide shadow-sm"><span class="w-2 h-2 rounded-full bg-sidebar-accent"></span> Gestion des Employes</div>
+                    <button data-action="open-create-employee" class="w-full md:w-auto bg-sidebar-dark hover:bg-sidebar-accent text-white px-5 py-2.5 rounded-xl shadow-lg shadow-sidebar-dark/20 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5"><i class="fa-solid fa-plus"></i> <span class="font-medium text-sm">Creer un employe</span></button>
+                </div>
+                <div class="mb-6 w-full md:max-w-md">
+                    <div class="relative">
+                        <input type="text" placeholder="Rechercher un employe..." class="w-full bg-white border border-gray-200 text-sm rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-sidebar-accent/20 focus:border-sidebar-accent transition-all shadow-sm text-sidebar-text">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+                <hr class="border-gray-200 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pb-20" id="employes-grid">\n    <div class="col-span-full bg-white border border-dashed border-sidebar-border rounded-2xl p-6 text-center text-gray-500">Aucun employe. Connectez Supabase pour alimenter la liste.</div>\n</div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg">TM</div>
+                            <div>
+                                <h3 class="text-lg font-bold text-sidebar-dark leading-tight">Thomas Martin</h3>
+                                <p class="text-xs text-gray-500">thomas.martin@nexus.com</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2 text-sm text-gray-600">
+                            <p><i class="fa-regular fa-phone mr-2 text-gray-400"></i>06 11 22 33 44</p>
+                            <p><i class="fa-regular fa-building mr-2 text-gray-400"></i>Site Alpha Logistics</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -242,29 +321,47 @@
                 </div>
                 <div class="flex-1 overflow-y-auto custom-scroll bg-gray-50/50">
                     <div class="max-w-4xl mx-auto p-4 md:p-8">
-                        <!-- Step 1 -->
+                                                <!-- Step 1 -->
                         <div id="r-step-content-1">
-                            <h3 class="text-lg font-bold text-sidebar-dark mb-6">Informations Générales</h3>
+                            <h3 class="text-lg font-bold text-sidebar-dark mb-6">Informations générales</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                                    <label for="report-contract-select" class="block text-sm font-medium text-gray-700 mb-2">Contrat concerné</label>
-                                    <select id="report-contract-select" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sidebar-accent focus:border-sidebar-accent block p-2.5">
-                                        <option selected>Choisir un contrat</option>
-                                        <option value="1">Maintenance Mensuelle (CTR-2023-452)</option>
-                                        <option value="2">Audit Sécurité (CTR-2023-480)</option>
-                                    </select>
+                                    <label for="report-contract-select" class="block text-sm font-medium text-gray-700 mb-2">Site / Contrat</label>
+                                    <div class="relative">
+                                        <select id="report-contract-select" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-sidebar-accent focus:border-sidebar-accent block py-3 px-4 appearance-none shadow-sm">
+                                            <option value="">Choisir un site...</option>
+                                        </select>
+                                        <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400"><i class="fa-solid fa-chevron-down text-xs"></i></span>
+                                    </div>
                                 </div>
                                 <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Date et Heure</label>
                                     <div class="flex gap-2">
-                                        <input type="date" id="report-date" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sidebar-accent focus:border-sidebar-accent block p-2.5">
-                                        <input type="time" id="report-start-time" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sidebar-accent focus:border-sidebar-accent block p-2.5 w-28">
+                                        <input type="date" id="report-date" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-sidebar-accent focus:border-sidebar-accent block py-3 px-3 shadow-sm">
+                                        <input type="time" id="report-start-time" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-sidebar-accent focus:border-sidebar-accent block py-3 px-3 w-28 shadow-sm">
                                     </div>
                                 </div>
-                                <div class="md:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                                    <label class="block text-sm font-medium text-gray-700 mb-4">Personnes présentes sur site</label>
-                                    <div id="report-attendees-container" class="space-y-3"></div>
-                                    <button data-action="add-report-attendee" class="mt-4 text-sm font-medium text-sidebar-accent hover:text-sidebar-dark flex items-center gap-2"><i class="fa-solid fa-plus-circle"></i> Ajouter une personne</button>
+                                <div class="md:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                        <div>
+                                            <p class="block text-sm font-medium text-gray-700">Personnes présentes sur site</p>
+                                            <p class="text-xs text-gray-400">Ajoutez les collaborateurs concernés</p>
+                                        </div>
+                                        <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                                            <select id="report-attendee-select" class="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-sidebar-accent focus:border-sidebar-accent py-2.5 px-3 shadow-sm">
+                                                <option value="">Choisir une personne...</option>
+                                            </select>
+                                            <button data-action="add-report-attendee" class="whitespace-nowrap bg-sidebar-dark text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-sidebar-accent transition-colors shadow-sm"><i class="fa-solid fa-plus mr-2"></i>Ajouter</button>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
+                                        <input id="report-attendee-name" type="text" placeholder="Nom et prénom (manuel)" class="bg-gray-50 border border-gray-200 text-sm rounded-xl px-3 py-2.5 focus:ring-sidebar-accent focus:border-sidebar-accent md:col-span-2">
+                                        <input id="report-attendee-role" type="text" placeholder="Rôle / fonction" class="bg-gray-50 border border-gray-200 text-sm rounded-xl px-3 py-2.5 focus:ring-sidebar-accent focus:border-sidebar-accent">
+                                        <div class="md:col-span-3 flex justify-end">
+                                            <button data-action="add-report-attendee-manual" class="text-sm font-medium text-sidebar-accent hover:text-sidebar-dark flex items-center gap-2 px-3 py-2"> <i class="fa-solid fa-user-plus"></i> Ajouter manuellement</button>
+                                        </div>
+                                    </div>
+                                    <div id="report-attendees-container" class="space-y-2"></div>
                                 </div>
                             </div>
                         </div>
@@ -383,38 +480,632 @@
         </div>
     </div>
     
-    <!-- MODAL CREATE CLIENT -->
-    <div id="create-client-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
-        <div data-action="close-create-client" class="absolute inset-0 bg-gray-900/30 backdrop-blur-sm transition-opacity duration-300 opacity-0"></div>
-        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full md:w-auto">
-            <div class="pointer-events-auto w-full transform transition ease-in-out duration-300 translate-x-full bg-white shadow-2xl flex flex-col h-full rounded-none md:rounded-l-2xl overflow-hidden">
-                <div class="bg-sidebar-bg px-4 md:px-8 py-6 border-b border-sidebar-border flex justify-between items-center shrink-0">
-                    <div><h2 class="text-xl md:text-2xl font-bold text-sidebar-dark">Nouveau Client</h2><p class="text-sidebar-muted text-sm mt-1">Création d'une nouvelle fiche client</p></div>
-                    <button data-action="close-create-client" class="text-gray-400 hover:text-gray-600 transition-colors p-2"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                <!-- MODAL CREATE CLIENT -->
+      <div id="create-client-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+          <div data-action="close-create-client" class="absolute inset-0 bg-gray-900/30 backdrop-blur-md transition-opacity duration-300 opacity-0"></div>
+          <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full">
+              <div class="pointer-events-auto w-full md:w-[92%] lg:w-[75%] max-w-[1120px] ml-auto transform transition ease-in-out duration-300 translate-x-full bg-white shadow-2xl flex flex-col h-full rounded-none md:rounded-l-3xl overflow-hidden">
+                  <div class="px-8 py-6 border-b border-gray-100 flex items-start justify-between gap-4">
+                      <div>
+                          <p class="text-xs uppercase tracking-widest text-sidebar-muted">Creation guidee</p>
+                          <h2 class="text-2xl md:text-3xl font-bold text-sidebar-dark leading-tight">Creer un Client</h2>
+                      </div>
+                      <button data-action="close-create-client" class="text-gray-400 hover:text-gray-800 transition-colors p-2 rounded-xl">
+                          <i class="fa-solid fa-xmark text-2xl"></i>
+                      </button>
+                  </div>
+                    <div class="bg-gray-50 px-8 py-4 border-b border-gray-100 step-track">
+                        <div class="grid grid-cols-3 gap-5 text-xs">
+                            <div class="flex items-center gap-3">
+                                <div id="step-dot-1" class="step-dot w-10 h-10 rounded-2xl border border-gray-200 bg-sidebar-accent text-white font-semibold flex items-center justify-center text-sm">1</div>
+                                <div>
+                                    <p class="step-label step-label-muted text-xs uppercase tracking-wider">Etape 1</p>
+                                    <p class="step-label text-sm font-semibold text-sidebar-dark">Choisir le type</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div id="step-dot-2" class="step-dot w-10 h-10 rounded-2xl border border-gray-200 bg-gray-200 text-gray-500 font-semibold flex items-center justify-center text-sm">2</div>
+                                <div>
+                                    <p class="step-label step-label-muted text-xs uppercase tracking-wider">Etape 2</p>
+                                    <p class="step-label text-sm font-semibold text-sidebar-dark">Renseignements</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div id="step-dot-3" class="step-dot w-10 h-10 rounded-2xl border border-gray-200 bg-gray-200 text-gray-500 font-semibold flex items-center justify-center text-sm">3</div>
+                                <div>
+                                    <p class="step-label step-label-muted text-xs uppercase tracking-wider">Etape 3</p>
+                                    <p class="step-label text-sm font-semibold text-sidebar-dark">Resume</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-progress-track mt-4 h-1 overflow-hidden">
+                            <span id="step-progress-fill" class="step-progress-fill block"></span>
+                        </div>
+                    </div>
+                  <div class="flex-1 overflow-y-auto px-8 py-6 space-y-10">
+                      <div id="step-content-1" class="space-y-6">
+                          <p class="text-sm text-gray-500 max-w-2xl">Definissez d'abord s'il s'agit d'un client direct ou d'un mandataire. Chaque carte mettra en avant le formulaire adapte.</p>
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <button type="button" data-action="select-client-type" data-client-type="direct" data-client-card="direct" class="border border-gray-200 rounded-3xl p-6 text-left transition-all duration-200 hover:shadow-[0_10px_45px_rgba(15,23,42,0.15)] hover:border-sidebar-accent bg-white flex flex-col gap-4 shadow-sm">
+                                  <div class="flex items-center justify-between">
+                                      <div>
+                                          <h3 class="text-lg font-semibold text-sidebar-dark">Client direct</h3>
+                                          <p class="text-sm text-gray-400">Relation directe avec votre client final.</p>
+                                      </div>
+                                      <span class="text-sidebar-accent text-3xl font-bold">&rarr;</span>
+                                  </div>
+                                  <p class="text-sm text-gray-500">Ajoutez logo, nom, adresse et coordonnees.</p>
+                                  <span class="self-end text-[11px] font-semibold uppercase text-sidebar-accent tracking-[0.3em]">Selectionner</span>
+                              </button>
+                              <button type="button" data-action="select-client-type" data-client-type="mandataire" data-client-card="mandataire" class="border border-gray-200 rounded-3xl p-6 text-left transition-all duration-200 hover:shadow-[0_10px_45px_rgba(15,23,42,0.15)] hover:border-sidebar-accent bg-white flex flex-col gap-4 shadow-sm">
+                                  <div class="flex items-center justify-between">
+                                      <div>
+                                          <h3 class="text-lg font-semibold text-sidebar-dark">Mandataire</h3>
+                                          <p class="text-sm text-gray-400">Mandataire, agence ou representant intermediaire.</p>
+                                      </div>
+                                      <span class="text-sidebar-accent text-3xl font-bold">&rarr;</span>
+                                  </div>
+                                  <p class="text-sm text-gray-500">Renseignez l'entite, puis le gestionnaire de contact.</p>
+                                  <span class="self-end text-[11px] font-semibold uppercase text-sidebar-accent tracking-[0.3em]">Selectionner</span>
+                              </button>
+                          </div>
+                      </div>
+                        <div id="step-content-2" class="hidden space-y-6">
+                           <div class="space-y-4">
+                               <div id="client-direct-panel" class="hidden rounded-3xl border border-gray-100 bg-white shadow-sm p-6 space-y-5">
+                                   <div class="flex items-center justify-between">
+                                       <h4 class="text-xs uppercase tracking-[0.4em] text-gray-400 font-semibold">Client direct</h4>
+                                   </div>
+                                   <div id="form-direct" class="space-y-6">
+                                       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                           <label class="flex flex-col text-sm font-medium text-gray-600">
+                                               Logo du client
+                                               <input type="file" id="client-direct-logo" accept="image/png, image/jpeg" class="mt-2 bg-white border border-dashed border-gray-200 rounded-xl p-3 text-xs text-gray-500 focus:outline-none focus:ring-2 focus:ring-sidebar-accent/50"/>
+                                           </label>
+                                           <label class="flex flex-col text-sm font-medium text-gray-600">
+                                               Nom*
+                                               <input type="text" id="client-direct-lastname" placeholder="Dupont" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent"/>
+                                           </label>
+                                           <label class="flex flex-col text-sm font-medium text-gray-600">
+                                               Prenom*
+                                               <input type="text" id="client-direct-firstname" placeholder="Jean" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent"/>
+                                           </label>
+                                           <label class="flex flex-col text-sm font-medium text-gray-600">
+                                               Adresse postale complete*
+                                               <input type="text" id="client-direct-address" data-address-input class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Ex : 45 Rue du Port, 75002 Paris"/>
+                                           </label>
+                                       </div>
+                                       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                           <label class="flex flex-col text-sm font-medium text-gray-600">
+                                               Email*
+                                               <input type="email" id="client-direct-email" placeholder="jean.dupont@email.com" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent"/>
+                                           </label>
+                                           <label class="flex flex-col text-sm font-medium text-gray-600">
+                                               Telephone*
+                                               <input type="tel" id="client-direct-phone" placeholder="06 12 34 56 78" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent"/>
+                                           </label>
+                                       </div>
+                                   </div>
+                               </div>
+                               <div id="client-mandataire-panel" class="hidden rounded-3xl border border-gray-100 bg-white shadow-sm p-6 space-y-5">
+                                   <div class="flex items-center justify-between">
+                                        <h4 class="text-xs uppercase tracking-[0.4em] text-gray-400 font-semibold">Mandataire</h4>
+                                    </div>
+                                   <div id="form-mandataire" class="space-y-6">
+                                       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                           <label class="flex flex-col text-sm font-medium text-gray-600">
+                                               Logo du mandataire
+                                               <input type="file" id="client-mand-logo" accept="image/png, image/jpeg" class="mt-2 bg-white border border-dashed border-gray-200 rounded-xl p-3 text-xs text-gray-500 focus:outline-none focus:ring-2 focus:ring-sidebar-accent/50"/>
+                                           </label>
+                                           <label class="flex flex-col text-sm font-medium text-gray-600">
+                                               Societe / representant*
+                                               <input type="text" id="client-mand-company" placeholder="Agence Immo 2000" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent"/>
+                                           </label>
+                                       </div>
+                                       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                           <label class="flex flex-col text-sm font-medium text-gray-600">
+                                               Adresse postale complete*
+                                               <input type="text" id="client-mand-address" data-address-input class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Ex : 120 Rue de la Republique, Lyon"/>
+                                           </label>
+                                           <label class="flex flex-col text-sm font-medium text-gray-600">
+                                               Email*
+                                               <input type="email" id="client-mand-email" placeholder="contact@immo2000.fr" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent"/>
+                                           </label>
+                                           <label class="flex flex-col text-sm font-medium text-gray-600">
+                                               Telephone*
+                                               <input type="tel" id="client-mand-phone" placeholder="04 78 56 32 10" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent"/>
+                                           </label>
+                                       </div>
+                                       <div class="border border-dashed border-sidebar-border/80 rounded-2xl bg-white p-5 space-y-4">
+                                           <div class="flex items-center justify-between">
+                                               <p class="text-sm font-semibold text-sidebar-dark">Coordonnees de contact (gestionnaire)</p>
+                                               <span class="text-xs text-sidebar-accent font-semibold uppercase tracking-[0.3em]">Gestionnaire</span>
+                                           </div>
+                                           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                               <label class="flex flex-col text-sm font-medium text-gray-600">
+                                                   Prenom
+                                                   <input type="text" id="client-mand-contact-firstname" placeholder="Julie" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent"/>
+                                               </label>
+                                               <label class="flex flex-col text-sm font-medium text-gray-600">
+                                                   Nom
+                                                   <input type="text" id="client-mand-contact-lastname" placeholder="Dubois" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent"/>
+                                               </label>
+                                           </div>
+                                           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                               <label class="flex flex-col text-sm font-medium text-gray-600">
+                                                   Email direct
+                                                   <input type="email" id="client-mand-contact-email" placeholder="julie.dubois@immo2000.fr" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent"/>
+                                               </label>
+                                               <label class="flex flex-col text-sm font-medium text-gray-600">
+                                                   Ligne directe
+                                                   <input type="tel" id="client-mand-contact-phone" placeholder="06 22 44 66 88" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent"/>
+                                               </label>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                      <div id="step-content-3" class="hidden space-y-6">
+                          <p class="text-sm text-gray-500 max-w-2xl">Verifiez les informations avant la validation finale. Vous pouvez retourner et modifier les details si besoin.</p>
+                          <div id="recap-direct" class="hidden border border-gray-100 rounded-3xl bg-white shadow-sm p-6 space-y-4">
+                              <h3 class="text-lg font-semibold text-sidebar-dark">Resume Client direct</h3>
+                              <div class="grid grid-cols-2 gap-4 text-sm text-gray-500">
+                                  <div>
+                                      <p class="text-xs uppercase tracking-wider text-gray-400">Nom complet</p>
+                                      <p id="recap-direct-name" class="text-sidebar-dark font-semibold">-</p>
+                                  </div>
+                                  <div>
+                                      <p class="text-xs uppercase tracking-wider text-gray-400">Adresse</p>
+                                      <p id="recap-direct-address" class="text-sidebar-dark font-semibold">-</p>
+                                  </div>
+                                  <div>
+                                      <p class="text-xs uppercase tracking-wider text-gray-400">Email</p>
+                                      <p id="recap-direct-email" class="text-sidebar-dark font-semibold">-</p>
+                                  </div>
+                                  <div>
+                                      <p class="text-xs uppercase tracking-wider text-gray-400">Telephone</p>
+                                      <p id="recap-direct-phone" class="text-sidebar-dark font-semibold">-</p>
+                                  </div>
+                              </div>
+                          </div>
+                          <div id="recap-mandataire" class="hidden border border-gray-100 rounded-3xl bg-white shadow-sm p-6 space-y-4">
+                              <h3 class="text-lg font-semibold text-sidebar-dark">Resume Mandataire</h3>
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-500">
+                                  <div>
+                                      <p class="text-xs uppercase tracking-wider text-gray-400">Societe / representant</p>
+                                      <p id="recap-mand-company" class="text-sidebar-dark font-semibold">-</p>
+                                  </div>
+                                  <div>
+                                      <p class="text-xs uppercase tracking-wider text-gray-400">Adresse</p>
+                                      <p id="recap-mand-address" class="text-sidebar-dark font-semibold">-</p>
+                                  </div>
+                                  <div>
+                                      <p class="text-xs uppercase tracking-wider text-gray-400">Email</p>
+                                      <p id="recap-mand-email" class="text-sidebar-dark font-semibold">-</p>
+                                  </div>
+                                  <div>
+                                      <p class="text-xs uppercase tracking-wider text-gray-400">Telephone</p>
+                                      <p id="recap-mand-phone" class="text-sidebar-dark font-semibold">-</p>
+                                  </div>
+                              </div>
+                              <div class="border-t border-gray-100 pt-4 text-sm space-y-2">
+                                  <p class="text-xs uppercase tracking-wider text-gray-400">Gestionnaire contact</p>
+                                  <p class="text-sidebar-dark font-semibold" id="recap-mand-contact-name">-</p>
+                                  <p class="text-sm text-gray-500" id="recap-mand-contact-email">-</p>
+                                  <p class="text-sm text-gray-500" id="recap-mand-contact-phone">-</p>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="px-8 py-5 border-t border-gray-100 bg-white flex flex-wrap gap-3 items-center justify-between">
+                      <button id="btn-prev" data-action="prev-step" type="button" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl font-medium transition-colors hidden">Precedent</button>
+                      <div class="flex items-center gap-3 ml-auto">
+                          <button id="btn-next" data-action="next-step" type="button" class="bg-sidebar-dark hover:bg-sidebar-accent text-white px-5 py-3 rounded-xl font-medium transition-colors hidden">Suivant</button>
+                          <button id="btn-finish" data-action="finish-creation" type="button" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-colors hidden">Terminer</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+      <!-- MODAL CLIENT DETAIL -->
+      <div id="client-detail-modal" class="fixed inset-0 z-60 hidden" aria-labelledby="client-detail-title" role="dialog" aria-modal="true">
+          <div data-action="close-client-detail" class="absolute inset-0 bg-gray-900/30 backdrop-blur-md transition-opacity duration-300 opacity-0"></div>
+          <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full">
+              <div class="pointer-events-auto w-full md:w-[92%] lg:w-[70%] max-w-[1100px] ml-auto transform transition ease-in-out duration-300 translate-x-full bg-white shadow-2xl flex flex-col h-full rounded-none md:rounded-l-2xl overflow-hidden">
+                  <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-start gap-4">
+                      <div>
+                          <p class="text-xs uppercase tracking-[0.6em] text-sidebar-muted">Fiche client</p>
+                          <h2 id="detail-client-name" class="text-2xl font-bold text-sidebar-dark">-</h2>
+                          <p id="detail-client-ref" class="text-sm text-gray-500 mt-1 font-mono">-</p>
+                      </div>
+                      <button data-action="close-client-detail" class="text-gray-400 hover:text-gray-800 transition-colors p-2 rounded-xl">
+                          <i class="fa-solid fa-xmark text-2xl"></i>
+                      </button>
+                  </div>
+                  <div class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+                      <div class="flex flex-col gap-6">
+                          <div class="flex items-center gap-5 bg-gray-50 border border-sidebar-border rounded-3xl p-5">
+                              <div class="w-16 h-16 rounded-2xl border border-sidebar-border overflow-hidden bg-white flex items-center justify-center">
+                                  <img id="detail-client-logo" src="" alt="Logo client" class="w-full h-full object-cover">
+                              </div>
+                              <div class="space-y-1">
+                                  <p id="detail-client-type" class="text-xs uppercase tracking-[0.4em] text-sidebar-accent font-semibold">-</p>
+                                  <p id="detail-client-address" class="text-sm text-gray-600">-</p>
+                              </div>
+                          </div>
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div class="bg-white border border-gray-100 rounded-3xl p-5 space-y-2">
+                                  <p class="text-xs uppercase tracking-[0.4em] text-gray-400">Contact principal</p>
+                                  <p id="detail-client-email" class="text-sm text-sidebar-dark font-semibold">-</p>
+                                  <p id="detail-client-phone" class="text-sm text-gray-500">-</p>
+                              </div>
+                              <div id="detail-manager-block" class="bg-white border border-gray-100 rounded-3xl p-5 space-y-2 hidden">
+                                  <p class="text-xs uppercase tracking-[0.4em] text-gray-400">Gestionnaire</p>
+                                  <p id="detail-manager-name" class="text-sm text-sidebar-dark font-semibold">-</p>
+                                  <p id="detail-manager-email" class="text-sm text-gray-500">-</p>
+                                  <p id="detail-manager-phone" class="text-sm text-gray-500">-</p>
+                              </div>
+                          </div>
+                          <div class="bg-sidebar-bg/30 border border-sidebar-border rounded-3xl p-5 space-y-2">
+                              <p class="text-xs uppercase tracking-[0.4em] text-gray-400">Notes</p>
+                              <p id="detail-client-notes" class="text-sm text-gray-600 leading-relaxed">-</p>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+    <div id="create-contract-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="contract-slide-title" role="dialog" aria-modal="true">
+        <div data-action="close-create-contract" class="absolute inset-0 bg-gray-900/30 backdrop-blur-md transition-opacity duration-300 opacity-0"></div>
+        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full">
+            <div class="pointer-events-auto w-full md:w-[92%] lg:w-[75%] max-w-[1120px] ml-auto transform transition ease-in-out duration-300 translate-x-full bg-white shadow-2xl flex flex-col h-full rounded-none md:rounded-l-3xl overflow-hidden">
+                <div class="px-8 py-6 border-b border-gray-100 flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.6em] text-sidebar-muted">Creation contrat</p>
+                        <h2 class="text-2xl md:text-3xl font-bold text-sidebar-dark leading-tight">Creer un contrat</h2>
+                    </div>
+                    <button data-action="close-create-contract" class="text-gray-400 hover:text-gray-800 transition-colors p-2 rounded-xl">
+                        <i class="fa-solid fa-xmark text-2xl"></i>
+                    </button>
                 </div>
-                <div class="flex-1 overflow-y-auto p-8">
-                    <p>Le formulaire de création de client est en cours de développement.</p>
+                <div class="bg-sidebar-bg px-8 py-4 border-b border-sidebar-border">
+                        <div class="grid grid-cols-3 gap-5 text-xs">
+                            <div class="flex items-center gap-3">
+                            <div id="c-step-dot-1" class="step-dot w-10 h-10 rounded-2xl border border-gray-200 bg-sidebar-accent text-white font-semibold flex items-center justify-center text-sm">1</div>
+                            <div>
+                                <p class="text-xs text-sidebar-muted uppercase tracking-wider">Etape 1</p>
+                                <p class="text-sm font-semibold text-sidebar-dark">Choisir le client</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div id="c-step-dot-2" class="step-dot w-10 h-10 rounded-2xl border border-gray-200 bg-gray-200 text-gray-500 font-semibold flex items-center justify-center text-sm">2</div>
+                            <div>
+                                <p class="text-xs text-sidebar-muted uppercase tracking-wider">Etape 2</p>
+                                <p class="text-sm font-semibold text-sidebar-dark">Details contrat</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div id="c-step-dot-3" class="step-dot w-10 h-10 rounded-2xl border border-gray-200 bg-gray-200 text-gray-500 font-semibold flex items-center justify-center text-sm">3</div>
+                            <div>
+                                <p class="text-xs text-sidebar-muted uppercase tracking-wider">Etape 3</p>
+                                <p class="text-sm font-semibold text-sidebar-dark">Recapitulatif</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-progress-track mt-4">
+                        <span id="c-step-progress-fill" class="step-progress-fill block" style="width:33%"></span>
+                    </div>
+                </div>
+                <div class="flex-1 overflow-y-auto px-8 py-6 space-y-10">
+                    <div id="c-step-content-1" class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm text-gray-500">Selectionnez un client existant ou ajoutez-en un nouveau.</p>
+                            <button data-action="open-create-client" class="bg-sidebar-dark hover:bg-sidebar-accent text-white px-4 py-2 rounded-xl text-sm font-medium shadow-sm">+ Nouveau client</button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <select id="contract-client-select" class="w-full bg-white border border-gray-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sidebar-accent/20 focus:border-sidebar-accent transition-all shadow-sm">
+                                <option value="">Choisir un client...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="c-step-content-2" class="hidden space-y-6">
+                        <p class="text-sm text-gray-500">Redigez les informations du contrat.</p>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="flex flex-col text-sm font-medium text-gray-600">
+                                    Lieu / Site*
+                                    <input type="text" id="contract-site-name" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Ex : Residence Les Lilas"/>
+                                </label>
+                                <label class="flex flex-col text-sm font-medium text-gray-600">
+                                    Adresse du lieu*
+                                    <input type="text" id="contract-site-address" data-address-input class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Ex : 12 rue du Port, 75002 Paris"/>
+                                </label>
+                                <label class="flex flex-col text-sm font-medium text-gray-600">
+                                    Montant HT / mois*
+                                    <input type="number" min="0" step="0.01" id="contract-amount-ht" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="1200.00"/>
+                                </label>
+                                <label class="flex flex-col text-sm font-medium text-gray-600">
+                                    Taux TVA
+                                    <select id="contract-vat" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent">
+                                        <option value="20">20%</option>
+                                        <option value="10">10%</option>
+                                        <option value="5.5">5.5%</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="bg-white border border-gray-100 rounded-3xl p-5 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <p class="text-sm font-semibold text-sidebar-dark">Contacts sur site</p>
+                                    <button data-action="add-contract-contact" class="text-xs font-semibold text-sidebar-accent hover:text-sidebar-dark uppercase tracking-[0.3em]">+ Ajouter</button>
+                                </div>
+                                <div id="contract-contacts-container" class="space-y-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="c-step-content-3" class="hidden space-y-6">
+                        <p class="text-sm text-gray-500">Verifiez les informations avant de finaliser.</p>
+                        <div class="bg-white border border-gray-100 rounded-3xl p-6 space-y-4">
+                            <h3 class="text-lg font-semibold text-sidebar-dark">Montant</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                                <div>
+                                    <p class="text-xs uppercase tracking-wider text-gray-400">HT / mois</p>
+                                    <p id="recap-ht-month" class="text-sidebar-dark font-semibold">-</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs uppercase tracking-wider text-gray-400">HT / an</p>
+                                    <p id="recap-ht-year" class="text-sidebar-dark font-semibold">-</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs uppercase tracking-wider text-gray-400">TTC / an</p>
+                                    <p id="recap-ttc-year" class="text-sidebar-dark font-semibold">-</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-3xl p-6 space-y-4">
+                            <h3 class="text-lg font-semibold text-sidebar-dark">Contrat</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                                <div>
+                                    <p class="text-xs uppercase tracking-wider text-gray-400">Client</p>
+                                    <p id="recap-contract-client" class="text-sidebar-dark font-semibold">-</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs uppercase tracking-wider text-gray-400">Lieu</p>
+                                    <p id="recap-contract-site" class="text-sidebar-dark font-semibold">-</p>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <p class="text-xs uppercase tracking-wider text-gray-400">Adresse</p>
+                                    <p id="recap-contract-address" class="text-sidebar-dark font-semibold">-</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-3xl p-6 space-y-3">
+                            <h3 class="text-lg font-semibold text-sidebar-dark">Contacts sur site</h3>
+                            <div id="recap-contract-contacts" class="space-y-2 text-sm text-gray-600"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-8 py-5 border-t border-gray-100 bg-white flex items-center justify-between">
+                    <button id="c-btn-prev" data-action="contract-prev-step" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl font-medium transition-colors hidden">Precedent</button>
+                    <div class="flex items-center gap-3 ml-auto">
+                        <button id="c-btn-next" data-action="contract-next-step" class="bg-sidebar-dark hover:bg-sidebar-accent text-white px-5 py-3 rounded-xl font-medium transition-colors">Suivant</button>
+                        <button id="c-btn-finish" data-action="finish-contract-creation" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-colors hidden">Terminer</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- MODAL CREATE CONTRACT -->
-    <div id="create-contract-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
-        <div data-action="close-create-contract" class="absolute inset-0 bg-gray-900/30 backdrop-blur-sm transition-opacity duration-300 opacity-0"></div>
-        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full md:w-auto">
-            <div class="pointer-events-auto w-full transform transition ease-in-out duration-300 translate-x-full bg-white shadow-2xl flex flex-col h-full rounded-none md:rounded-l-2xl overflow-hidden">
-                <div class="bg-sidebar-bg px-4 md:px-8 py-6 border-b border-sidebar-border flex justify-between items-center shrink-0">
-                    <div><h2 class="text-xl md:text-2xl font-bold text-sidebar-dark">Nouveau Contrat</h2><p class="text-sidebar-muted text-sm mt-1">Création d'une nouvelle fiche contrat</p></div>
-                    <button data-action="close-create-contract" class="text-gray-400 hover:text-gray-600 transition-colors p-2"><i class="fa-solid fa-xmark text-2xl"></i></button>
+      
+      <!-- MODAL EDIT CLIENT -->
+      <div id="edit-client-modal" class="fixed inset-0 z-60 hidden" aria-labelledby="edit-client-title" role="dialog" aria-modal="true">
+          <div data-action="close-edit-client" class="absolute inset-0 bg-gray-900/30 backdrop-blur-md transition-opacity duration-300 opacity-0"></div>
+          <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full">
+              <div class="pointer-events-auto w-full md:w-[92%] lg:w-[70%] max-w-[1100px] ml-auto transform transition ease-in-out duration-300 translate-x-full bg-white shadow-2xl flex flex-col h-full rounded-none md:rounded-l-2xl overflow-hidden">
+                  <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-start gap-4">
+                      <div>
+                          <p class="text-xs uppercase tracking-[0.6em] text-sidebar-muted">Modifier le client</p>
+                          <h2 id="edit-client-title" class="text-2xl font-bold text-sidebar-dark">-</h2>
+                          <p class="text-sm text-gray-500 mt-1 font-mono" id="edit-client-ref-label">-</p>
+                      </div>
+                      <button data-action="close-edit-client" class="text-gray-400 hover:text-gray-800 transition-colors p-2 rounded-xl">
+                          <i class="fa-solid fa-xmark text-2xl"></i>
+                      </button>
+                  </div>
+                  <div class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <label class="flex flex-col text-sm font-medium text-gray-600">
+                              Nom / Societe*
+                              <input type="text" id="edit-client-name" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" />
+                          </label>
+                          <label class="flex flex-col text-sm font-medium text-gray-600">
+                              Reference
+                              <input type="text" id="edit-client-ref" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" />
+                          </label>
+                          <label class="flex flex-col text-sm font-medium text-gray-600">
+                              Type
+                              <select id="edit-client-type" data-action="edit-client-type-change" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent">
+                                  <option value="direct">Client direct</option>
+                                  <option value="mandataire">Mandataire</option>
+                              </select>
+                          </label>
+                          <label class="flex flex-col text-sm font-medium text-gray-600">
+                              Adresse
+                              <input type="text" id="edit-client-address" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" />
+                          </label>
+                          <label class="flex flex-col text-sm font-medium text-gray-600">
+                              Email
+                              <input type="email" id="edit-client-email" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" />
+                          </label>
+                          <label class="flex flex-col text-sm font-medium text-gray-600">
+                              Telephone
+                              <input type="tel" id="edit-client-phone" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" />
+                          </label>
+                      </div>
+                      <div id="edit-manager-block" class="rounded-3xl border border-gray-100 bg-white p-6 space-y-4 hidden">
+                          <p class="text-xs uppercase tracking-[0.4em] text-gray-400">Gestionnaire</p>
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <label class="flex flex-col text-sm font-medium text-gray-600">
+                                  Nom complet
+                                  <input type="text" id="edit-manager-name" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" />
+                              </label>
+                              <label class="flex flex-col text-sm font-medium text-gray-600">
+                                  Email
+                                  <input type="email" id="edit-manager-email" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" />
+                              </label>
+                              <label class="flex flex-col text-sm font-medium text-gray-600">
+                                  Telephone
+                                  <input type="tel" id="edit-manager-phone" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" />
+                              </label>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="px-8 py-5 border-t border-gray-100 bg-white flex justify-end">
+                      <button data-action="save-client-edit" class="bg-sidebar-dark hover:bg-sidebar-accent text-white px-5 py-3 rounded-xl font-medium transition-colors shadow-sm">Confirmer</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+    <!-- MODAL REPORT CONVERSATION -->
+    <div id="report-conv-modal" class="fixed inset-0 z-60 hidden" aria-labelledby="report-conv-title" role="dialog" aria-modal="true">
+        <div data-action="close-report-conv" class="absolute inset-0 bg-gray-900/30 backdrop-blur-md transition-opacity duration-300 opacity-0"></div>
+        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full">
+            <div class="pointer-events-auto w-full md:w-[90%] lg:w-[70%] max-w-[1080px] ml-auto transform transition ease-in-out duration-300 translate-x-full bg-white shadow-2xl flex flex-col h-full rounded-none md:rounded-l-3xl overflow-hidden">
+                <div class="px-8 py-6 border-b border-gray-100 flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.6em] text-sidebar-muted">Historique d'activité</p>
+                        <h2 id="report-conv-title" class="text-2xl md:text-3xl font-bold text-sidebar-dark leading-tight">Signalement</h2>
+                        <p id="report-conv-sub" class="text-sm text-gray-500 mt-1">-</p>
+                    </div>
+                    <button data-action="close-report-conv" class="text-gray-400 hover:text-gray-800 transition-colors p-2 rounded-xl">
+                        <i class="fa-solid fa-xmark text-2xl"></i>
+                    </button>
                 </div>
-                 <div class="flex-1 overflow-y-auto p-8">
-                    <p>Le formulaire de création de contrat est en cours de développement.</p>
+                <div class="flex-1 overflow-y-auto px-8 py-6">
+                    <div id="report-conv-list" class="relative pl-6 space-y-6">
+                        <!-- timeline items injected -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
+    <!-- MODAL CREER EMPLOYE -->
+    <div id="create-employee-modal" class="fixed inset-0 z-60 hidden" aria-labelledby="create-employee-title" role="dialog" aria-modal="true">
+        <div data-action="close-create-employee" class="absolute inset-0 bg-gray-900/30 backdrop-blur-md transition-opacity duration-300 opacity-0"></div>
+        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full">
+            <div class="pointer-events-auto w-full md:w-[90%] lg:w-[70%] max-w-[800px] ml-auto transform transition ease-in-out duration-300 translate-x-full bg-white shadow-2xl flex flex-col h-full rounded-none md:rounded-l-2xl overflow-hidden">
+                <div class="px-8 py-6 border-b border-gray-100 flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.6em] text-sidebar-muted">Nouvel employe</p>
+                        <h2 id="create-employee-title" class="text-2xl font-bold text-sidebar-dark">Creer un employe</h2>
+                        <p class="text-sm text-gray-500 mt-1">Coordonnees et affectation</p>
+                    </div>
+                    <button data-action="close-create-employee" class="text-gray-400 hover:text-gray-800 transition-colors p-2 rounded-xl">
+                        <i class="fa-solid fa-xmark text-2xl"></i>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="flex flex-col text-sm font-medium text-gray-600">
+                            Code d'activation
+                            <input type="text" id="employee-code" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm bg-gray-50 text-gray-500 focus:outline-none cursor-not-allowed" readonly>
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-1">
+                            <label class="flex flex-col text-sm font-medium text-gray-600 md:col-span-1">
+                                Prenom*
+                                <input type="text" id="employee-firstname" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Marie">
+                            </label>
+                            <label class="flex flex-col text-sm font-medium text-gray-600 md:col-span-1">
+                                Nom*
+                                <input type="text" id="employee-lastname" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Lefevre">
+                            </label>
+                        </div>
+                        <label class="flex flex-col text-sm font-medium text-gray-600">
+                            Email*
+                            <input type="email" id="employee-email" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="email@domaine.com">
+                        </label>
+                        <label class="flex flex-col text-sm font-medium text-gray-600">
+                            Telephone
+                            <input type="tel" id="employee-phone" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="06 00 00 00 00">
+                        </label>
+                        <label class="flex flex-col text-sm font-medium text-gray-600 md:col-span-2">
+                            Adresse postale
+                            <input type="text" id="employee-address" data-address-input class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Ex : 12 rue du Port, 75002 Paris">
+                        </label>
+                        <label class="flex flex-col text-sm font-medium text-gray-600">
+                            Role / Fonction
+                            <input type="text" id="employee-role" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Technicien, Superviseur...">
+                        </label>
+                        <label class="flex flex-col text-sm font-medium text-gray-600">
+                            Site / Affectation
+                            <input type="text" id="employee-site" class="mt-2 rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Site Alpha Logistics">
+                        </label>
+                    </div>
+                </div>
+                <div class="px-8 py-5 border-t border-gray-100 bg-white flex justify-end">
+                    <button data-action="save-employee" class="bg-sidebar-dark hover:bg-sidebar-accent text-white px-5 py-3 rounded-xl font-medium transition-colors shadow-sm">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- MODAL DETAIL EMPLOYE -->
+    <div id="employee-detail-modal" class="fixed inset-0 z-60 hidden" aria-labelledby="employee-detail-title" role="dialog" aria-modal="true">
+        <div data-action="close-employee-detail" class="absolute inset-0 bg-gray-900/30 backdrop-blur-md transition-opacity duration-300 opacity-0"></div>
+        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 md:pl-10 w-full">
+            <div class="pointer-events-auto w-full md:w-[90%] lg:w-[70%] max-w-[1000px] ml-auto transform transition ease-in-out duration-300 translate-x-full bg-white shadow-2xl flex flex-col h-full rounded-none md:rounded-l-2xl overflow-hidden">
+                <div class="px-8 py-6 border-b border-gray-100 flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.6em] text-sidebar-muted">Profil employe</p>
+                        <h2 id="employee-detail-name" class="text-2xl font-bold text-sidebar-dark">-</h2>
+                        <p class="text-sm text-gray-500 mt-1" id="employee-detail-role">-</p>
+                    </div>
+                    <button data-action="close-employee-detail" class="text-gray-400 hover:text-gray-800 transition-colors p-2 rounded-xl">
+                        <i class="fa-solid fa-xmark text-2xl"></i>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+                    <div class="flex items-center gap-3">
+                        <span id="employee-detail-status" class="text-xs font-bold px-2.5 py-1 rounded-full bg-gray-100 text-gray-600">Statut</span>
+                        <div class="flex gap-2">
+                            <button data-action="set-employee-status" data-status="Actif" data-employee-status-btn class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">Actif</button>
+                            <button data-action="set-employee-status" data-status="Demission" data-employee-status-btn class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">Demission</button>
+                            <button data-action="set-employee-status" data-status="Licencie" data-employee-status-btn class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">Licencie</button>
+                            <button data-action="set-employee-status" data-status="Autre" data-employee-status-btn class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">Autre</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-gray-50 border border-gray-100 rounded-2xl p-4 space-y-2 text-sm text-gray-700">
+                            <p class="font-semibold text-sidebar-dark">Coordonnees</p>
+                            <p><i class="fa-regular fa-envelope mr-2 text-gray-400"></i><span id="employee-detail-email">-</span></p>
+                            <p><i class="fa-regular fa-phone mr-2 text-gray-400"></i><span id="employee-detail-phone">-</span></p>
+                            <p><i class="fa-regular fa-location-dot mr-2 text-gray-400"></i><span id="employee-detail-address">-</span></p>
+                            <p><i class="fa-regular fa-building mr-2 text-gray-400"></i><span id="employee-detail-site">-</span></p>
+                            <p><i class="fa-regular fa-barcode mr-2 text-gray-400"></i>Code: <span id="employee-detail-code">-</span></p>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-2xl p-4 space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-sidebar-dark mb-1">Salaire horaire (€)</label>
+                                <input type="number" step="0.01" id="employee-detail-salary" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-sidebar-dark mb-1">Contrat</label>
+                                <input type="text" id="employee-detail-contract" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="CDI, CDD...">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-sidebar-dark mb-1">Avenant / Note</label>
+                                <textarea id="employee-detail-note" rows="3" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-sidebar-accent focus:border-sidebar-accent" placeholder="Avenants, remarques..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-8 py-5 border-t border-gray-100 bg-white flex justify-between items-center">
+                    <button data-action="delete-employee" class="text-red-500 hover:text-red-600 text-sm font-semibold">Supprimer</button>
+                    <button data-action="save-employee-detail" class="bg-sidebar-dark hover:bg-sidebar-accent text-white px-5 py-3 rounded-xl font-medium transition-colors shadow-sm">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- CHANGE EMPLOYEE MODAL -->
     <div id="change-employee-modal" class="fixed inset-0 z-[60] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" data-action="close-change-employee"></div>
@@ -442,9 +1133,16 @@
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg hidden z-[60] flex items-center gap-2 w-max max-w-[90%] text-center">
+    <div id="toast" class="fixed left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg hidden z-[60] flex items-center gap-2 w-max max-w-[90%] text-center">
         <i class="fa-solid fa-check text-green-400"></i> Action effectuée
     </div>
     <script src="./scripts/app.js" defer></script>
 </body>
 </html>
+
+
+
+
+
+
+

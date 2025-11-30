@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nessaly's Group - Portail</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --teal: #2dd4bf;
+            --dark: #050914;
+            --glass: rgba(255,255,255,0.04);
+            --glass-border: rgba(255,255,255,0.08);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at 20% 20%, rgba(45,212,191,0.14), transparent 25%),
+                        radial-gradient(circle at 80% 0%, rgba(59,130,246,0.12), transparent 22%),
+                        radial-gradient(circle at 20% 80%, rgba(14,165,233,0.14), transparent 25%),
+                        #050914;
+            color: #e2e8f0;
+        }
+        a { color: inherit; text-decoration: none; }
+        .glass {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+        }
+        .pill {
+            background: linear-gradient(135deg, #22c55e, #0ea5e9);
+            color: #03141d;
+            box-shadow: 0 10px 40px rgba(14,165,233,0.25);
+        }
+        .card {
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.35); }
+        .btn-enter {
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.3s ease;
+        }
+        .card:hover .btn-enter { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+    <nav class="glass" style="position:fixed;top:0;left:0;right:0;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:10;">
+        <div style="display:flex;align-items:center;gap:12px;">
+            <div class="glass" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:var(--teal);font-size:18px;"><i class="fa-regular fa-building"></i></div>
+            <div>
+                <div style="font-weight:800;letter-spacing:0.04em;">Nessaly's Group</div>
+                <div style="font-size:12px;color:#94a3b8;">Portail securise</div>
+            </div>
+        </div>
+        <a href="index.html" class="pill" style="padding:10px 16px;border-radius:999px;font-weight:700;display:inline-flex;align-items:center;gap:8px;text-decoration:none;">
+            <i class="fa-solid fa-gauge-high"></i> Tableau de bord
+        </a>
+    </nav>
+
+    <main style="max-width:1100px;margin:120px auto 60px auto;padding:0 20px;display:flex;flex-direction:column;gap:40px;">
+        <section style="text-align:center;">
+            <p style="font-size:13px;letter-spacing:0.3em;text-transform:uppercase;color:#67e8f9;">Portail unifie</p>
+            <h1 style="font-family:'Playfair Display',serif;font-size:44px;margin:10px 0 14px 0;color:#e2e8f0;">Acces aux espaces Nessaly's</h1>
+            <p style="max-width:620px;margin:0 auto;color:#94a3b8;font-size:16px;">Choisissez votre espace (Admin, Societes, Employes) ou connectez-vous directement via Supabase Auth.</p>
+        </section>
+
+        <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;">
+            <div class="glass card" style="padding:24px;border-radius:16px;display:flex;flex-direction:column;gap:12px;">
+                <div style="width:52px;height:52px;border-radius:14px;background:rgba(34,197,94,0.12);display:flex;align-items:center;justify-content:center;color:#22c55e;font-size:20px;"><i class="fa-solid fa-shield-halved"></i></div>
+                <h3 style="font-family:'Playfair Display',serif;font-size:22px;margin:0;">Administration</h3>
+                <p style="color:#94a3b8;font-size:14px;line-height:1.5;">Gestion globale, parametres et supervision securisee.</p>
+                <a href="#admin-login" class="btn-enter" style="align-self:flex-start;padding:10px 14px;border:1px solid rgba(34,197,94,0.3);border-radius:12px;color:#22c55e;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.12em;">Se connecter</a>
+            </div>
+            <div class="glass card" style="padding:24px;border-radius:16px;display:flex;flex-direction:column;gap:12px;">
+                <div style="width:52px;height:52px;border-radius:14px;background:rgba(56,189,248,0.12);display:flex;align-items:center;justify-content:center;color:#38bdf8;font-size:20px;"><i class="fa-solid fa-building"></i></div>
+                <h3 style="font-family:'Playfair Display',serif;font-size:22px;margin:0;">Espace Societes</h3>
+                <p style="color:#94a3b8;font-size:14px;line-height:1.5;">Acces aux contrats, rapports et signalements clients.</p>
+                <a href="index.html" class="btn-enter" style="align-self:flex-start;padding:10px 14px;border:1px solid rgba(56,189,248,0.3);border-radius:12px;color:#38bdf8;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.12em;">Entrer</a>
+            </div>
+            <div class="glass card" style="padding:24px;border-radius:16px;display:flex;flex-direction:column;gap:12px;">
+                <div style="width:52px;height:52px;border-radius:14px;background:rgba(94,234,212,0.12);display:flex;align-items:center;justify-content:center;color:#67e8f9;font-size:20px;"><i class="fa-solid fa-id-card"></i></div>
+                <h3 style="font-family:'Playfair Display',serif;font-size:22px;margin:0;">Espace Employes</h3>
+                <p style="color:#94a3b8;font-size:14px;line-height:1.5;">Portail RH : contrats, avenants, statut et profil.</p>
+                <a href="index.html#view-employes" class="btn-enter" style="align-self:flex-start;padding:10px 14px;border:1px solid rgba(103,232,249,0.3);border-radius:12px;color:#67e8f9;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.12em;">Entrer</a>
+            </div>
+        </section>
+
+        <section id="admin-login" class="glass" style="padding:26px;border-radius:18px;max-width:520px;margin:0 auto; border:1px solid var(--glass-border);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <div>
+                    <p style="text-transform:uppercase;font-size:11px;letter-spacing:0.3em;color:#67e8f9;">Connexion Admin</p>
+                    <h3 style="margin:6px 0 0 0;font-size:22px;color:#e2e8f0;font-family:'Playfair Display',serif;">Supabase Auth</h3>
+                </div>
+                <i class="fa-regular fa-lock-keyhole" style="color:#22c55e;font-size:18px;"></i>
+            </div>
+            <form id="admin-login-form" style="display:flex;flex-direction:column;gap:12px;">
+                <label style="font-size:13px;font-weight:700;color:#cbd5e1;">Email
+                    <input id="login-email" type="email" required style="margin-top:6px;width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:#e2e8f0;">
+                </label>
+                <label style="font-size:13px;font-weight:700;color:#cbd5e1;">Mot de passe
+                    <input id="login-password" type="password" required style="margin-top:6px;width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:#e2e8f0;">
+                </label>
+                <button id="login-submit" type="submit" class="pill" style="margin-top:6px;padding:12px;border:none;border-radius:12px;font-weight:800;letter-spacing:0.05em;cursor:pointer;">Se connecter</button>
+                <p id="login-message" style="min-height:18px;font-size:13px;color:#cbd5e1;"></p>
+            </form>
+            <p style="font-size:11px;color:#94a3b8;margin-top:10px;">Verification via Supabase. Redirection vers le portail interne en cas de succes.</p>
+        </section>
+    </main>
+
+    <footer class="glass" style="margin-top:auto;padding:16px 24px;color:#94a3b8;font-size:12px;text-align:center;">
+        © 2025 Nessaly's Group. Tous droits reserves.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://wirwhmoxndqvlopzvgtf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpcndobW94bmRxdmxvcHp2Z3RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NDMzNjksImV4cCI6MjA4MDAxOTM2OX0.Xp0PuJkglDYoWDq39_d6TuYdDX6ktJ9iJ1TSP2yT5Yc';
+
+        const loginForm = document.getElementById('admin-login-form');
+        const loginBtn = document.getElementById('login-submit');
+        const loginMsg = document.getElementById('login-message');
+
+        // Animation cartes
+        document.querySelectorAll('.card').forEach((card, idx) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(14px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 150 + idx * 120);
+        });
+
+        // Health check Supabase
+        let supabaseClient = null;
+        if (window.supabase) {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            supabaseClient.auth.getSession().then(({ error }) => {
+                if (error) {
+                    loginMsg.textContent = 'Erreur Supabase: ' + error.message;
+                    loginMsg.style.color = '#fca5a5';
+                }
+            });
+        } else {
+            loginMsg.textContent = 'SDK Supabase introuvable';
+            loginMsg.style.color = '#fca5a5';
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!supabaseClient) {
+                loginMsg.textContent = 'Client Supabase non initialisé';
+                loginMsg.style.color = '#fca5a5';
+                return;
+            }
+            loginMsg.textContent = '';
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Connexion...';
+
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) {
+                loginMsg.textContent = 'Echec de connexion: ' + error.message;
+                loginMsg.style.color = '#fca5a5';
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Se connecter';
+                return;
+            }
+            loginMsg.textContent = 'Connexion reussie, redirection...';
+            loginMsg.style.color = '#bbf7d0';
+            setTimeout(() => { window.location.href = 'admin.html'; }, 800);
+        });
+    </script>
+</body>
+</html>
