@@ -7,64 +7,263 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root { --bg: #060a14; --glass: rgba(255,255,255,0.04); --border: rgba(255,255,255,0.08); --teal:#22c55e; }
-    * { box-sizing:border-box; }
-    body { margin:0; font-family:'Manrope',sans-serif; background:var(--bg); color:#e2e8f0; min-height:100vh; display:flex; flex-direction:column; }
-    .glass { background:var(--glass); border:1px solid var(--border); backdrop-filter:blur(10px); box-shadow:0 20px 50px rgba(0,0,0,0.35); }
-    a { color:inherit; text-decoration:none; }
+    :root {
+      --teal: #22c55e;
+      --blue: #38bdf8;
+      --bg: #050914;
+      --glass: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(34,197,94,0.12), transparent 22%),
+                  radial-gradient(circle at 80% 0%, rgba(56,189,248,0.10), transparent 20%),
+                  #050914;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: inherit; text-decoration: none; }
+    .glass {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+    .header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 72px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+    .btn {
+      border: none;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      color: #041015;
+      box-shadow: 0 10px 30px rgba(56,189,248,0.25);
+    }
+    .layout {
+      max-width: 1200px;
+      margin: 100px auto 50px auto;
+      padding: 0 20px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+    .side {
+      position: sticky;
+      top: 90px;
+      align-self: start;
+    }
+    .tabs button {
+      width: 100%;
+      text-align: left;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+    .tabs button.active {
+      background: rgba(34,197,94,0.1);
+      border-color: rgba(34,197,94,0.3);
+      color: var(--text);
+    }
+    .tabs button:hover { background: rgba(255,255,255,0.04); }
+    .card {
+      padding: 18px;
+      border-radius: 16px;
+    }
+    .content { display: none; }
+    .content.active { display: block; }
+    .status-dot {
+      width: 10px; height: 10px;
+      border-radius: 999px;
+      background: var(--teal);
+      box-shadow: 0 0 10px var(--teal);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+    }
+    th { color: var(--text); }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(34,197,94,0.1);
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .danger { color: #f87171; background: rgba(248,113,113,0.1); }
   </style>
 </head>
 <body>
-  <nav class="glass" style="position:fixed;top:0;left:0;right:0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;z-index:10;">
+  <nav class="glass header">
     <div style="display:flex;align-items:center;gap:12px;">
-      <div class="glass" style="width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--teal);"><i class="fa-regular fa-building"></i></div>
+      <div class="glass" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--teal);"><i class="fa-regular fa-building"></i></div>
       <div>
         <div style="font-weight:800;letter-spacing:0.04em;">Admin Nessaly's</div>
-        <div style="font-size:12px;color:#94a3b8;">Espace securise</div>
+        <div style="font-size:12px;color:var(--muted);">Espace securise</div>
       </div>
     </div>
-    <button id="logout-btn" style="background:var(--teal);color:#041015;border:none;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;">Deconnexion</button>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="text-align:right;">
+        <div id="admin-email" style="font-weight:700;">-</div>
+        <div style="font-size:12px;color:var(--muted);">Connecte</div>
+      </div>
+      <button id="logout-btn" class="btn btn-primary"><i class="fa-solid fa-power-off"></i></button>
+    </div>
   </nav>
 
-  <main style="flex:1;max-width:1100px;margin:100px auto 40px auto;padding:0 20px;display:grid;gap:20px;">
-    <section class="glass" style="padding:20px;border-radius:16px;">
-      <h1 style="margin:0 0 6px 0;font-size:26px;">Tableau de bord admin</h1>
-      <p style="margin:0;color:#94a3b8;font-size:14px;">Connecte en tant que <span id="admin-email">-</span></p>
-    </section>
-    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;">
-      <div class="glass" style="padding:18px;border-radius:14px;">
-        <p style="font-size:13px;color:#94a3b8;margin:0 0 4px 0;">Actions rapides</p>
-        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
-          <li><a href="index.html" style="color:var(--teal);font-weight:700;">Portail interne</a></li>
-          <li><a href="#" style="color:var(--teal);font-weight:700;">Gestion utilisateurs</a></li>
-          <li><a href="#" style="color:var(--teal);font-weight:700;">Parametres</a></li>
+  <div class="layout">
+    <aside class="glass side card">
+      <p style="margin:0 0 14px 0;color:var(--muted);font-size:13px;">Navigation</p>
+      <div class="tabs" id="tabs">
+        <button data-tab="dashboard" class="active"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
+        <button data-tab="companies"><i class="fa-solid fa-building"></i> Societes</button>
+        <button data-tab="invoices"><i class="fa-solid fa-file-invoice"></i> Factures</button>
+        <button data-tab="stats"><i class="fa-solid fa-chart-column"></i> Stats</button>
+        <button data-tab="settings"><i class="fa-solid fa-gear"></i> Parametres</button>
+      </div>
+      <div style="margin-top:16px;padding:12px;border-radius:14px;background:rgba(34,197,94,0.08);color:var(--teal);font-weight:700;display:flex;align-items:center;gap:10px;">
+        <span class="status-dot"></span> Session active
+      </div>
+    </aside>
+
+    <section class="glass card">
+      <div id="access-denied" class="content" style="display:none;">
+        <h2 style="margin:0 0 10px 0;color:#f87171;">Acces refuse</h2>
+        <p style="color:var(--muted);font-size:14px;">Votre compte n'est pas autorise pour l'espace admin. <a href="Accueil.html#admin-login" style="color:var(--teal);font-weight:700;">Revenir a l'accueil</a></p>
+      </div>
+
+      <div id="dashboard" class="content active">
+        <h2 style="margin:0 0 10px 0;">Tableau de bord</h2>
+        <p style="color:var(--muted);margin:0 0 16px 0;">Vue synthese</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+          <div class="glass card" style="padding:14px;border-radius:14px;">
+            <p style="margin:0;color:var(--muted);font-size:13px;">Connexions</p>
+            <h3 style="margin:6px 0 0 0;">Supabase Auth</h3>
+            <span class="chip">Actif</span>
+          </div>
+          <div class="glass card" style="padding:14px;border-radius:14px;">
+            <p style="margin:0;color:var(--muted);font-size:13px;">Role</p>
+            <h3 id="role-label" style="margin:6px 0 0 0;">Admin</h3>
+          </div>
+        </div>
+      </div>
+
+      <div id="companies" class="content">
+        <h2 style="margin:0 0 10px 0;">Societes</h2>
+        <p style="color:var(--muted);margin:0 0 12px 0;">Liste a synchroniser depuis Supabase</p>
+        <div class="glass card" style="padding:12px;border-radius:14px;">
+          <p style="margin:0;color:var(--muted);">Aucune donnee. Connectez votre base Supabase pour alimenter cette section.</p>
+        </div>
+      </div>
+
+      <div id="invoices" class="content">
+        <h2 style="margin:0 0 10px 0;">Factures</h2>
+        <p style="color:var(--muted);margin:0 0 12px 0;">Synthese facturation</p>
+        <table>
+          <thead><tr><th>Ref</th><th>Client</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td colspan="3" style="text-align:center;color:var(--muted);">Aucune donnee</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="stats" class="content">
+        <h2 style="margin:0 0 10px 0;">Stats</h2>
+        <p style="color:var(--muted);margin:0;">Tableau de bord chiffré a connecter</p>
+      </div>
+
+      <div id="settings" class="content">
+        <h2 style="margin:0 0 10px 0;">Parametres</h2>
+        <p style="color:var(--muted);margin:0 0 12px 0;">Gestion du portail admin</p>
+        <ul style="padding-left:16px;color:var(--muted);">
+          <li>Connexion Supabase Auth</li>
+          <li>Gestion des roles et acces</li>
+          <li>Connexion aux donnees (a connecter)</li>
         </ul>
       </div>
-      <div class="glass" style="padding:18px;border-radius:14px;">
-        <p style="font-size:13px;color:#94a3b8;margin:0 0 4px 0;">Statut</p>
-        <p style="margin:0;font-weight:700;color:#cbd5e1;">Connecte via Supabase Auth</p>
-      </div>
     </section>
-  </main>
-
-  <footer class="glass" style="padding:14px 20px;text-align:center;font-size:12px;color:#94a3b8;">
-    © 2025 Nessaly's Group — Espace Administrateur
-  </footer>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = 'https://wirwhmoxndqvlopzvgtf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpcndobW94bmRxdmxvcHp2Z3RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NDMzNjksImV4cCI6MjA4MDAxOTM2OX0.Xp0PuJkglDYoWDq39_d6TuYdDX6ktJ9iJ1TSP2yT5Yc';
+    const ALLOWED_EMAILS = ['nessalyspro@gmail.com'];
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function ensureSession() {
-      const { data } = await supabaseClient.auth.getSession();
-      const user = data?.session?.user;
-      if (!user) {
+    const tabs = document.querySelectorAll('.tabs button');
+    const contents = document.querySelectorAll('.content');
+    const emailLabel = document.getElementById('admin-email');
+    const roleLabel = document.getElementById('role-label');
+    const accessDenied = document.getElementById('access-denied');
+
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabs.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const target = btn.dataset.tab;
+        contents.forEach(c => c.classList.remove('active'));
+        document.getElementById(target)?.classList.add('active');
+      });
+    });
+
+    async function guard() {
+      const { data, error } = await supabaseClient.auth.getSession();
+      if (error || !data?.session) {
         window.location.href = 'Accueil.html#admin-login';
         return;
       }
-      document.getElementById('admin-email').textContent = user.email || '-';
+      const user = data.session.user;
+      emailLabel.textContent = user.email || '-';
+      roleLabel.textContent = user.role || 'Admin';
+      if (!ALLOWED_EMAILS.includes(user.email)) {
+        accessDenied.style.display = 'block';
+        contents.forEach(c => c.classList.remove('active'));
+        tabs.forEach(b => b.disabled = true);
+      }
     }
 
     document.getElementById('logout-btn').addEventListener('click', async () => {
@@ -72,7 +271,7 @@
       window.location.href = 'Accueil.html#admin-login';
     });
 
-    ensureSession();
+    guard();
   </script>
 </body>
 </html>
