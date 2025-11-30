@@ -194,6 +194,7 @@
       <div id="companies" class="content">
         <h2 style="margin:0 0 10px 0;">Societes</h2>
         <p style="color:var(--muted);margin:0 0 12px 0;">Liste a synchroniser depuis Supabase</p>
+        <button id="admin-create-societe" class="btn btn-primary" style="margin-bottom:12px;display:inline-flex;align-items:center;gap:8px;"><i class="fa-solid fa-building"></i> Creer une societe</button>
         <div class="glass card" style="padding:12px;border-radius:14px;">
           <p style="margin:0;color:var(--muted);">Aucune donnee. Connectez votre base Supabase pour alimenter cette section.</p>
         </div>
@@ -225,6 +226,69 @@
         </ul>
       </div>
     </section>
+  </div>
+
+  <div id="admin-societe-modal" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:100;">
+    <div class="glass" style="width:90%;max-width:760px;border-radius:18px;padding:24px;max-height:92vh;overflow:auto;position:relative;">
+      <button id="admin-close-societe" style="position:absolute;top:14px;right:14px;border:none;background:none;color:var(--muted);font-size:20px;cursor:pointer;">✕</button>
+      <h3 style="margin:0 0 6px 0;">Creer une societe</h3>
+      <p id="admin-soc-ref-label" style="margin:0 0 16px 0;font-family:monospace;color:var(--muted);">Ref: -</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+        <label>Nom*
+          <input id="admin-soc-nom" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);">
+        </label>
+        <label>Référence
+          <input id="admin-soc-ref" readonly class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--muted);background:rgba(255,255,255,0.04);">
+        </label>
+        <label>Logo (URL)
+          <input id="admin-soc-logo" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);">
+        </label>
+        <label>SIRET
+          <input id="admin-soc-siret" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);">
+        </label>
+        <label style="grid-column:1/-1;">Adresse
+          <input id="admin-soc-adresse" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);">
+        </label>
+        <label>Email
+          <input id="admin-soc-email" type="email" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);">
+        </label>
+        <label>Téléphone
+          <input id="admin-soc-tel" type="tel" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);">
+        </label>
+        <label>Type de societe
+          <select id="admin-soc-type" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);background:rgba(255,255,255,0.03);">
+            <option value="">Choisir...</option>
+            <option>Menage</option>
+            <option>Deratisation / Desinsectisation</option>
+            <option>Secu incendie</option>
+            <option>Ascensoriste</option>
+            <option>Espaces verts</option>
+            <option>Autre</option>
+          </select>
+        </label>
+        <label>Remise %
+          <input id="admin-remise-pct" type="number" min="0" max="100" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);">
+        </label>
+        <label>Remise (mois)
+          <input id="admin-remise-mois" type="number" min="0" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);">
+        </label>
+        <label style="grid-column:1/-1;display:flex;align-items:center;gap:10px;">
+          <input type="checkbox" id="admin-essaie" style="width:18px;height:18px;"> Essai 30 jours (2 clients, 5 contrats, 5 employes)
+        </label>
+      </div>
+      <h4 style="margin:18px 0 8px 0;">Contact principal</h4>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+        <label>Statut<input id="admin-contact-statut" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);"></label>
+        <label>Prenom<input id="admin-contact-prenom" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);"></label>
+        <label>Nom<input id="admin-contact-nom" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);"></label>
+        <label>Email<input id="admin-contact-email" type="email" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);"></label>
+        <label>Téléphone<input id="admin-contact-tel" type="tel" class="glass" style="margin-top:6px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);color:var(--text);"></label>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:12px;justify-content:flex-end;">
+        <button id="admin-soc-cancel" class="btn" style="background:rgba(255,255,255,0.08);color:var(--muted);">Annuler</button>
+        <button id="admin-soc-save" class="btn btn-primary">Enregistrer (simulation)</button>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -269,6 +333,27 @@
     document.getElementById('logout-btn').addEventListener('click', async () => {
       await supabaseClient.auth.signOut();
       window.location.href = 'Accueil.html#admin-login';
+    });
+
+    const socModal = document.getElementById('admin-societe-modal');
+    const openSocModal = () => {
+      const ref = `SCT-${Date.now().toString().slice(-6)}`;
+      document.getElementById('admin-soc-ref').value = ref;
+      document.getElementById('admin-soc-ref-label').textContent = `Ref: ${ref}`;
+      ['admin-soc-nom','admin-soc-logo','admin-soc-siret','admin-soc-adresse','admin-soc-email','admin-soc-tel','admin-soc-type','admin-remise-pct','admin-remise-mois','admin-contact-statut','admin-contact-prenom','admin-contact-nom','admin-contact-email','admin-contact-tel'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('admin-essaie').checked = false;
+      socModal.style.display = 'flex';
+    };
+    const closeSocModal = () => socModal.style.display = 'none';
+    document.getElementById('admin-create-societe')?.addEventListener('click', openSocModal);
+    document.getElementById('admin-close-societe').addEventListener('click', closeSocModal);
+    document.getElementById('admin-soc-cancel').addEventListener('click', closeSocModal);
+    document.getElementById('admin-soc-save').addEventListener('click', () => {
+      alert('Société créée (simulation)');
+      closeSocModal();
     });
 
     guard();
